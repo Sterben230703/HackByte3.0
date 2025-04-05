@@ -20,6 +20,7 @@ import {
   Eye,
   Bot,
   ExternalLink,
+  LayoutDashboard,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
@@ -398,8 +399,8 @@ export default function ContractManagement() {
           <div className="px-4 py-6">
             <div className="flex items-center justify-between">
               {!isSidebarCollapsed && (
-                <h2 className="text-2xl font-bold flex items-center text-gray-800">
-                  <IoDocumentLockOutline className="h-7 w-7 mx-2 text-blue-600" />
+                <h2 className="text-4xl font-bold flex items-center text-gray-800">
+                  <img src="/logo.png" alt="Logo" className="w-14 h-13 mr-2" />
                   SAULT
                 </h2>
               )}
@@ -416,7 +417,7 @@ export default function ContractManagement() {
 
           <nav className="flex-1 px-4 space-y-1">
             {[
-              { id: "Home", icon: <Clock className="w-4 h-4" />, label: "Home" },
+              { id: "dashboard", icon: <LayoutDashboard className="w-4 h-4" />, label: "Dashboard" },
               { id: "Categorized", icon: <Grid className="w-4 h-4" />, label: "Categorized", path: "/categorize" },
               { id: "Shared", icon: <Share2 className="w-4 h-4" />, label: "Shared", path: "/shared-docs" },
               { id: "Trash", icon: <Trash2 className="w-4 h-4" />, label: "Trash" },
