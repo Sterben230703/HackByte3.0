@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
-import { IoDocumentLockOutline } from "react-icons/io5";
+import { IoAnalytics, IoDocument, IoDocumentLockOutline } from "react-icons/io5";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 interface Signature {
@@ -417,11 +417,12 @@ export default function ContractManagement() {
 
           <nav className="flex-1 px-4 space-y-1">
             {[
-              { id: "dashboard", icon: <LayoutDashboard className="w-4 h-4" />, label: "Dashboard" },
-              { id: "Categorized", icon: <Grid className="w-4 h-4" />, label: "Categorized", path: "/categorize" },
-              { id: "Shared", icon: <Share2 className="w-4 h-4" />, label: "Shared", path: "/shared-docs" },
-              { id: "Trash", icon: <Trash2 className="w-4 h-4" />, label: "Trash" },
-              { id: "bot", icon: <Bot className="w-4 h-4" />, label: "Talk-2-Docs", path: "/chatwithdocs" },
+              { id: "dashboard", icon: <LayoutDashboard className="w-5 h-5" />, label: "Dashboard" },
+              { id: "documents", icon: <IoDocument className="w-5 h-5" />, label: "Documents" },
+              { id: "analytics", icon: <IoAnalytics className="w-5 h-5" />, label: "Analytics" },
+              { id: "Categorized", icon: <Grid className="w-5 h-5" />, label: "Categorized", path: "/categorize" },
+              { id: "Shared", icon: <Share2 className="w-5 h-5" />, label: "Shared", path: "/shared-docs" },
+              // { id: "Trash", icon: <Trash2 className="w-5 h-5" />, label: "Trash" },
             ].map((item) => (
               <Link key={item.id} to={item.path || "#"}>
                 <button
@@ -440,17 +441,7 @@ export default function ContractManagement() {
           </nav>
 
           {/* Bottom Actions */}
-          <div className="mt-auto p-4 border-t border-gray-200 space-y-2">
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className={`w-full bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 ${
-                isSidebarCollapsed ? "p-3" : "px-4 py-3"
-              }`}
-            >
-              <Upload className="w-4 h-4" />
-              {!isSidebarCollapsed && <span>Upload</span>}
-            </button>
-          </div>
+          
         </div>
 
         {/* Main Content */}
@@ -480,6 +471,7 @@ export default function ContractManagement() {
                     Logout
                   </button>
                 </div>
+                
               )}
             </div>
           </div>
