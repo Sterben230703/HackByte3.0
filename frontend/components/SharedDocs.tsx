@@ -1,28 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { aptosClient } from "@/utils/aptosClient";
 import { InputTransactionData } from "@aptos-labs/wallet-adapter-react";
-import axios from 'axios';
-import { toast, Toaster } from 'react-hot-toast';
-import {WalletName}  from '@aptos-labs/wallet-adapter-react';
-import { 
-  Clock, 
-  Grid,  
-  Share2, 
-  Trash2, 
-  Upload, 
-  MoreVertical,
-  FileText, 
-  X, 
-  Menu,
-  Eye,
-  Bot,
-  ExternalLink, 
-} from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { Button } from './ui/button';
-import {IoDocumentLockOutline} from 'react-icons/io5'
- 
+import axios from "axios";
+import { toast, Toaster } from "react-hot-toast";
+import { Clock, Grid, Share2, Trash2, Upload, MoreVertical, FileText, X, Eye, ExternalLink } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "./ui/button";
 
 interface Signature {
   signer: string;
@@ -45,26 +29,29 @@ interface Signer {
 
 const STATUS_STYLES = {
   completed: {
-    bg: 'bg-blue-100',
-    border: 'border-blue-200',
-    text: 'text-blue-600',
-    icon: 'text-blue-600',
-    hover: 'hover:border-blue-300'
+    bg: "bg-blue-100",
+    border: "border-blue-200",
+    text: "text-blue-600",
+    icon: "text-blue-600",
+    hover: "hover:border-blue-300",
   },
   pending: {
-    bg: 'bg-amber-100',
-    border: 'border-amber-200',
-    text: 'text-amber-600',
-    icon: 'text-amber-600',
-    hover: 'hover:border-amber-300'
-  }
+    bg: "bg-amber-100",
+    border: "border-amber-200",
+    text: "text-amber-600",
+    icon: "text-amber-600",
+    hover: "hover:border-amber-300",
+  },
 };
 
-const ACTIVE_TAB_STYLES = "bg-blue-50 border-l-2 border-blue-500 text-blue-700 font-medium";
+interface SharedDocsProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
 
-export default function SharedDocs() {
-  const { account, signAndSubmitTransaction, connect, disconnect } = useWallet(); 
-  const [activeTab, setActiveTab] = useState('recent');
+export default function SharedDocs({ isOpen, onClose }: SharedDocsProps) {
+  const { account, signAndSubmitTransaction } = useWallet();
+  const [activeTab, setActiveTab] = useState("recent");
   const [isGridView, setIsGridView] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [documents, setDocuments] = useState<Document[]>([]);
@@ -72,24 +59,11 @@ export default function SharedDocs() {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [viewingDoc, setViewingDoc] = useState<Document | null>(null);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(window.innerWidth < 768);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [viewUrl, setViewUrl] = useState<string | null>(null);
-  const [signersList, setSignersList] = useState<Signer[]>([{ address: '' }]);
+  const [signersList, setSignersList] = useState<Signer[]>([{ address: "" }]);
 
   const moduleAddress = process.env.VITE_APP_MODULE_ADDRESS;
   const moduleName = process.env.VITE_APP_MODULE_NAME;
-
-  useEffect(() => {
-    const handleResize = () => {
-      const mobile = window.innerWidth < 768;
-      setIsMobile(mobile);
-      setIsSidebarCollapsed(mobile);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   useEffect(() => {
     if (account) {
@@ -106,14 +80,12 @@ export default function SharedDocs() {
           function: `${moduleAddress}::${moduleName}::get_all_documents`,
           typeArguments: [],
           functionArguments: [],
-        }
+        },
       });
-
 
       if (Array.isArray(response) && response.length > 0 && account) {
         const userDocuments = response[0].filter(
-          doc =>  doc.signers.includes(account.address) && 
-          doc.creator !== account.address 
+          (doc) => doc.signers.includes(account.address) && doc.creator !== account.address,
         );
         setDocuments(userDocuments);
       } else {
@@ -133,14 +105,15 @@ export default function SharedDocs() {
           function: `${moduleAddress}::${moduleName}::get_all_documents`,
           typeArguments: [],
           functionArguments: [],
-        }
+        },
       });
 
       if (Array.isArray(response) && response.length > 0 && account) {
-        const pendingDocs = response[0].filter(doc => 
-          doc.signers.includes(account.address) && 
-          !doc.signatures.some(sig => sig.signer === account.address) &&
-          !doc.is_completed
+        const pendingDocs = response[0].filter(
+          (doc) =>
+            doc.signers.includes(account.address) &&
+            !doc.signatures.some((sig) => sig.signer === account.address) &&
+            !doc.is_completed,
         );
         setPendingDocuments(pendingDocs);
       } else {
@@ -154,7 +127,7 @@ export default function SharedDocs() {
   const fetchDocumentContent = async (cid: string) => {
     try {
       const url = `https://gateway.pinata.cloud/ipfs/${cid}`;
-      const response = await axios.get(url, { responseType: 'blob' });
+      const response = await axios.get(url, { responseType: "blob" });
       return response.data;
     } catch (error) {
       console.error("Error fetching document content:", error);
@@ -178,19 +151,19 @@ export default function SharedDocs() {
   const uploadToPinata = async (file: File) => {
     const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
     let formData = new FormData();
-    formData.append('file', file);
-    
+    formData.append("file", file);
+
     const metadata = JSON.stringify({
-      name: 'Document File',
+      name: "Document File",
     });
-    formData.append('pinataMetadata', metadata);
-    
+    formData.append("pinataMetadata", metadata);
+
     try {
       const res = await axios.post(url, formData, {
         headers: {
-          'pinata_api_key': process.env.VITE_APP_PINATA_API_KEY,
-          'pinata_secret_api_key': process.env.VITE_APP_PINATA_SECRET_API_KEY,
-          "Content-Type": "multipart/form-data"
+          pinata_api_key: process.env.VITE_APP_PINATA_API_KEY,
+          pinata_secret_api_key: process.env.VITE_APP_PINATA_SECRET_API_KEY,
+          "Content-Type": "multipart/form-data",
         },
       });
       return res.data.IpfsHash;
@@ -201,24 +174,24 @@ export default function SharedDocs() {
   };
 
   const handleCreateDocument = async () => {
-    if (!account || !file || signersList.every(s => !s.address.trim())) return;
+    if (!account || !file || signersList.every((s) => !s.address.trim())) return;
     setLoading(true);
     try {
       const cid = await uploadToPinata(file);
       const signerAddresses = signersList
-        .filter(signer => signer.address.trim() !== '')
-        .map(signer => signer.address.trim());
+        .filter((signer) => signer.address.trim() !== "")
+        .map((signer) => signer.address.trim());
 
       const payload: InputTransactionData = {
         data: {
           function: `${moduleAddress}::${moduleName}::create_document`,
           functionArguments: [cid, signerAddresses],
-        }
+        },
       };
       await signAndSubmitTransaction(payload);
       setIsModalOpen(false);
       setFile(null);
-      setSignersList([{ address: '' }]);
+      setSignersList([{ address: "" }]);
       fetchUserDocuments();
       toast.custom((_t) => (
         <div className="bg-white text-gray-800 px-6 py-4 shadow-xl rounded-lg border border-gray-200 animate-in slide-in-from-bottom-5">
@@ -241,47 +214,47 @@ export default function SharedDocs() {
   const handleShare = (docId: number) => {
     const signingLink = `${window.location.origin}/sign/${docId}`;
     navigator.clipboard.writeText(signingLink);
-    toast.custom((t) => (
-      <div className={`${
-        t.visible ? 'animate-enter' : 'animate-leave'
-      } max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex items-center justify-between p-4 gap-3 border border-gray-200`}>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100">
-            <Share2 className="w-5 h-5 text-blue-600" />
-          </div>
-          <p className="text-sm font-medium text-gray-800">
-            Signing link copied to clipboard
-          </p>
-        </div>
-        <button
-          onClick={() => toast.dismiss(t.id)}
-          className="p-2 rounded-lg hover:bg-gray-100"
+    toast.custom(
+      (t) => (
+        <div
+          className={`${
+            t.visible ? "animate-enter" : "animate-leave"
+          } max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex items-center justify-between p-4 gap-3 border border-gray-200`}
         >
-          <X className="w-4 h-4" />
-        </button>
-      </div>
-    ), {
-      duration: 2000,
-      position: 'bottom-right',
-    });
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100">
+              <Share2 className="w-5 h-5 text-blue-600" />
+            </div>
+            <p className="text-sm font-medium text-gray-800">Signing link copied to clipboard</p>
+          </div>
+          <button onClick={() => toast.dismiss(t.id)} className="p-2 rounded-lg hover:bg-gray-100">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      ),
+      {
+        duration: 2000,
+        position: "bottom-right",
+      },
+    );
   };
 
-  const openIPFSFile = async(cid: string) => {
+  const openIPFSFile = async (cid: string) => {
     const ipfsUrl = `https://ipfs.io/ipfs/${cid}`;
-    const response = await axios.get(ipfsUrl, { responseType: 'blob' });
-    window.open(URL.createObjectURL(response.data), '_blank');
+    const response = await axios.get(ipfsUrl, { responseType: "blob" });
+    window.open(URL.createObjectURL(response.data), "_blank");
   };
 
   const DocumentCard = ({ doc }: { doc: Document }) => {
-    const status = doc.is_completed ? 'completed' : 'pending';
+    const status = doc.is_completed ? "completed" : "pending";
     const styles = STATUS_STYLES[status];
-    
+
     return (
-      <div 
+      <div
         className={`group relative bg-white rounded-xl border ${styles.border} ${styles.hover} transition-all duration-200 shadow-sm hover:shadow-md`}
       >
         <div className={`absolute top-0 left-4 right-0 h-2 ${styles.bg} rounded-b-lg`}></div>
-        
+
         <Link to={`/sign/${doc.id}`}>
           <div className="p-4 md:p-6">
             <div className="flex items-start justify-between mb-4">
@@ -289,7 +262,7 @@ export default function SharedDocs() {
                 <FileText className={`w-5 h-5 ${styles.icon}`} />
               </div>
               <div className="flex space-x-2">
-                <button 
+                <button
                   onClick={(e) => {
                     e.preventDefault();
                     handleViewDocument(doc);
@@ -298,7 +271,7 @@ export default function SharedDocs() {
                 >
                   <Eye className="w-4 h-4 text-gray-600" />
                 </button>
-                <button 
+                <button
                   onClick={(e) => {
                     e.preventDefault();
                     handleShare(doc.id);
@@ -316,8 +289,10 @@ export default function SharedDocs() {
                 {doc.signatures.length} of {doc.signers.length} signatures
               </p>
               <div className={`text-xs ${styles.text} flex items-center space-x-1`}>
-                <span className={`w-2 h-2 rounded-full ${status === 'completed' ? 'bg-blue-500' : 'bg-amber-500'}`}></span>
-                <span>{status === 'completed' ? 'Completed' : 'Pending'}</span>
+                <span
+                  className={`w-2 h-2 rounded-full ${status === "completed" ? "bg-blue-500" : "bg-amber-500"}`}
+                ></span>
+                <span>{status === "completed" ? "Completed" : "Pending"}</span>
               </div>
             </div>
           </div>
@@ -325,366 +300,117 @@ export default function SharedDocs() {
       </div>
     );
   };
+
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800">
+    <div className="bg-gray-50 text-gray-800 h-[90vh] overflow-auto">
       <Toaster />
-      {/* Main Layout */}
-      <div className="flex h-screen overflow-hidden">
-        {/* Sidebar */}
-        <div 
-          className={`${
-            isMobile ? 'fixed' : 'relative'
-          } z-20 transition-all duration-300 flex flex-col ${
-            isSidebarCollapsed ? 'w-16' : 'w-64'
-          } h-full border-r border-gray-200 bg-white shadow-sm`}
-        >
-          {/* Navigation */}
-          <div className="px-4 py-6">
-            <div className="flex items-center justify-between">
-              {!isSidebarCollapsed && <h2 className="text-2xl font-bold flex items-center text-blue-700"><IoDocumentLockOutline className='h-7 w-7 mx-2 text-blue-600' />Sault</h2>}
-              {isMobile && (
-                <button
-                  onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-                  className="p-2 rounded-lg hover:bg-gray-100"
-                >
-                  <Menu className="w-5 h-5 text-gray-600" />
-                </button>
-              )}
+      <div className="flex items-center justify-between p-4 md:p-6 border-b">
+        <h2 className="text-2xl font-bold text-gray-800">Shared Documents</h2>
+        
+      </div>
+
+      {/* Content Area */}
+      <div className="p-4 md:p-6 space-y-6">
+        {/* Statistics Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          {/* Signed Documents */}
+          <div className="p-6 rounded-xl bg-white shadow-sm border border-gray-200">
+            <div className="flex items-center justify-between mb-4">
+              <div className="space-y-1">
+                <h3 className="text-lg font-medium text-gray-800">Signed Documents</h3>
+                <p className="text-sm text-gray-500">Successfully completed</p>
+              </div>
+              <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
+                <FileText className="w-6 h-6 text-blue-600" />
+              </div>
+            </div>
+            <div className="flex items-end space-x-4">
+              <div className="flex-1">
+                <div className="h-24 flex items-end">
+                  <div
+                    className="flex-1 bg-blue-100 rounded-t-lg transition-all duration-500"
+                    style={{
+                      height: documents.length
+                        ? `${(documents.filter((doc) => doc.is_completed).length / documents.length) * 100}%`
+                        : "0%",
+                      minHeight: "10%",
+                    }}
+                  />
+                </div>
+                <div className="h-1 w-full bg-blue-100 mt-2" />
+              </div>
+              <div className="text-2xl font-bold text-blue-600">
+                {documents.filter((doc) => doc.is_completed).length}
+              </div>
             </div>
           </div>
 
-          <nav className="flex-1 px-4 space-y-1">
-            {[
-              { id: 'Home', icon: <Clock className="w-4 h-4" />, label: 'Home', path: '/' },
-              { id: 'Categorized', icon: <Grid className="w-4 h-4" />, label: 'Categorized', path: '/categorize' },
-              { id: 'Shared', icon: <Share2 className="w-4 h-4" />, label: 'Shared' },
-              { id: 'Trash', icon: <Trash2 className="w-4 h-4" />, label: 'Trash' },
-              { id: 'bot', icon: <Bot className="w-4 h-4" />, label: 'Talk-2-Docs', path: '/chatwithdocs' }
-            ].map((item) => (
-              <Link key={item.id} to={item.path || '#'}>
-                <button
-                  onClick={() => setActiveTab(item.id)}
-                  className={`w-full rounded-lg transition-all duration-200 flex items-center ${
-                    isSidebarCollapsed 
-                      ? 'justify-center p-3' 
-                      : 'px-4 py-2 space-x-3'
-                  } ${
-                    activeTab === item.id 
-                      ? ACTIVE_TAB_STYLES
-                      : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
-                  }`}
-                >
-                  {item.icon}
-                  {!isSidebarCollapsed && <span>{item.label}</span>}
-                </button>
-              </Link>
-            ))}
-          </nav>
-
-          {/* Bottom Actions */}
-          <div className="mt-auto p-4 border-t border-gray-200 space-y-2">
-            <button 
-              onClick={() => setIsModalOpen(true)}
-              className={`w-full bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 ${
-                isSidebarCollapsed ? 'p-3' : 'px-4 py-3'
-              }`}
-            >
-              <Upload className="w-4 h-4" />
-              {!isSidebarCollapsed && <span>Upload</span>}
-            </button>
+          {/* Pending Documents */}
+          <div className="p-6 rounded-xl bg-white shadow-sm border border-gray-200">
+            <div className="flex items-center justify-between mb-4">
+              <div className="space-y-1">
+                <h3 className="text-lg font-medium text-gray-800">Pending Documents</h3>
+                <p className="text-sm text-gray-500">Awaiting signatures</p>
+              </div>
+              <div className="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center">
+                <Clock className="w-6 h-6 text-amber-600" />
+              </div>
+            </div>
+            <div className="flex items-end space-x-4">
+              <div className="flex-1">
+                <div className="h-24 flex items-end">
+                  <div
+                    className="flex-1 bg-amber-100 rounded-t-lg transition-all duration-500"
+                    style={{
+                      height: documents.length
+                        ? `${(documents.filter((doc) => !doc.is_completed).length / documents.length) * 100}%`
+                        : "0%",
+                      minHeight: "10%",
+                    }}
+                  />
+                </div>
+                <div className="h-1 w-full bg-amber-100 mt-2" />
+              </div>
+              <div className="text-2xl font-bold text-amber-600">
+                {documents.filter((doc) => !doc.is_completed).length}
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="flex-1 ml-20 md:ml-0 overflow-y-auto">
-          {/* Header */}
-          <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
-            <div className="px-4 md:px-6 py-4 flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                  <span className="text-xs md:text-sm">Completed</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 rounded-full bg-amber-500"></div>
-                  <span className="text-xs md:text-sm">Pending</span>
-                </div>
-              </div>
-              {!account ? (
-                <button 
-                  onClick={() => connect("Petra" as WalletName<"Petra">)}
-                  className="px-4 md:px-6 py-2 text-sm md:text-base rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors text-white"
-                >
-                  Connect
-                </button>
-              ) : (
-                <div className="flex items-center space-x-3">
-                  <Button className="hidden md:inline text-sm text-white bg-blue-600 hover:bg-blue-700">
-                    {`${account.address.slice(0, 6)}...${account.address.slice(-4)}`}
-                  </Button>
-                  <button
-                    onClick={() => disconnect()}
-                    className="p-2 rounded-lg hover:bg-gray-100"
-                  >
-                    <X className="w-4 h-4 text-gray-600" />
-                  </button>
-                </div>
-              )}
+        {/* Documents Grid */}
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-medium text-gray-800">Your Documents</h3>
+            <div className="flex space-x-2">
+              <button
+                onClick={() => setIsGridView(true)}
+                className={`p-2 rounded-lg ${isGridView ? "bg-gray-100" : "hover:bg-gray-100"}`}
+              >
+                <Grid className="w-4 h-4 text-gray-600" />
+              </button>
+              <button
+                onClick={() => setIsGridView(false)}
+                className={`p-2 rounded-lg ${!isGridView ? "bg-gray-100" : "hover:bg-gray-100"}`}
+              >
+                <MoreVertical className="w-4 h-4 text-gray-600" />
+              </button>
             </div>
           </div>
 
-          {/* Content Area */}
-          <div className="p-4 md:p-6 space-y-6">
-            {/* Statistics Section */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              {/* Signed Documents */}
-              <div className="p-6 rounded-xl bg-white shadow-sm border border-gray-200">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="space-y-1">
-                    <h3 className="text-lg font-medium text-gray-800">Signed Documents</h3>
-                    <p className="text-sm text-gray-500">Successfully completed</p>
-                  </div>
-                  <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
-                    <FileText className="w-6 h-6 text-blue-600" />
-                  </div>
-                </div>
-                <div className="flex items-end space-x-4">
-                  <div className="flex-1">
-                    <div className="h-24 flex items-end">
-                      <div 
-                        className="flex-1 bg-blue-100 rounded-t-lg transition-all duration-500"
-                        style={{ 
-                          height: documents.length ? 
-                            `${(documents.filter(doc => doc.is_completed).length / documents.length) * 100}%` :
-                            '0%',
-                          minHeight: '10%'
-                        }}
-                      />
-                    </div>
-                    <div className="h-1 w-full bg-blue-100 mt-2" />
-                  </div>
-                  <div className="text-2xl font-bold text-blue-600">
-                    {documents.filter(doc => doc.is_completed).length}
-                  </div>
-                </div>
-              </div>
-
-              {/* Pending Documents */}
-              <div className="p-6 rounded-xl bg-white shadow-sm border border-gray-200">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="space-y-1">
-                    <h3 className="text-lg font-medium text-gray-800">Pending Documents</h3>
-                    <p className="text-sm text-gray-500">Awaiting signatures</p>
-                  </div>
-                  <div className="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center">
-                    <Clock className="w-6 h-6 text-amber-600" />
-                  </div>
-                </div>
-                <div className="flex items-end space-x-4">
-                  <div className="flex-1">
-                    <div className="h-24 flex items-end">
-                      <div 
-                        className="flex-1 bg-amber-100 rounded-t-lg transition-all duration-500" 
-                        style={{ 
-                          height: documents.length ? 
-                            `${(documents.filter(doc => !doc.is_completed).length / documents.length) * 100}%` :
-                            '0%',
-                          minHeight: '10%'
-                        }}
-                      />
-                    </div>
-                    <div className="h-1 w-full bg-amber-100 mt-2" />
-                  </div>
-                  <div className="text-2xl font-bold text-amber-600">
-                    {documents.filter(doc => !doc.is_completed).length}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Documents Grid */}
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium text-gray-800">Your Documents</h3>
-                <div className="flex space-x-2">
-                  <button 
-                    onClick={() => setIsGridView(true)}
-                    className={`p-2 rounded-lg ${isGridView ? 'bg-gray-100' : 'hover:bg-gray-100'}`}
-                  >
-                    <Grid className="w-4 h-4 text-gray-600" />
-                  </button>
-                  <button 
-                    onClick={() => setIsGridView(false)}
-                    className={`p-2 rounded-lg ${!isGridView ? 'bg-gray-100' : 'hover:bg-gray-100'}`}
-                  >
-                    <MoreVertical className="w-4 h-4 text-gray-600" />
-                  </button>
-                </div>
-              </div>
-
-              <div className={`grid gap-4 ${
-                isGridView 
-                  ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4' 
-                  : 'grid-cols-1'
-              }`}>
-                {documents.map((doc) => (
-                  <DocumentCard key={doc.id} doc={doc} />
-                ))}
-              </div>
-            </div>
+          <div
+            className={`grid gap-4 ${
+              isGridView ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4" : "grid-cols-1"
+            }`}
+          >
+            {documents.map((doc) => (
+              <DocumentCard key={doc.id} doc={doc} />
+            ))}
           </div>
         </div>
       </div>
-    {/* Enhanced Upload Modal */}
-    {isModalOpen && (
-            <div 
-            className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-            onClick={(e) => {
-                if (e.target === e.currentTarget) setIsModalOpen(false);
-            }}
-            >
-            <div 
-                className="bg-white rounded-xl w-full max-w-md animate-in zoom-in-95 duration-200 shadow-xl"
-                onClick={e => e.stopPropagation()}
-            >
-                <div className="border-b border-gray-200">
-                <div className="flex justify-between items-center p-6">
-                    <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                        <Upload className="w-5 h-5 text-blue-600" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-800">Upload Document</h3>
-                    </div>
-                    <button 
-                    onClick={() => setIsModalOpen(false)}
-                    className="p-2 rounded-lg hover:bg-gray-100 transition-colors group"
-                    >
-                    <X className="w-5 h-5 group-hover:rotate-90 transition-transform text-gray-600" />
-                    </button>
-                </div>
-                </div>
-                
-                <div className="p-6 space-y-6">
-                {/* File Upload Section */}
-                <div 
-                    className={`relative border-2 border-dashed rounded-xl p-6 text-center transition-all duration-200 
-                    ${file ? 'border-blue-500/50 bg-blue-50' : 'border-gray-300 hover:border-blue-400'}`}
-                >
-                    {file ? (
-                    <div className="space-y-2">
-                        <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center mx-auto">
-                        <FileText className="w-6 h-6 text-blue-600" />
-                        </div>
-                        <p className="font-medium truncate text-gray-800">{file.name}</p>
-                        <p className="text-sm text-gray-500">
-                        {(file.size / (1024 * 1024)).toFixed(2)} MB
-                        </p>
-                        <button 
-                        onClick={() => setFile(null)}
-                        className="text-sm text-red-600 hover:text-red-700 transition-colors"
-                        >
-                        Remove file
-                        </button>
-                    </div>
-                    ) : (
-                    <div
-                        onClick={() => document.getElementById('modal-file-input')?.click()}
-                        className="cursor-pointer space-y-2"
-                    >
-                        <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center mx-auto">
-                        <Upload className="w-6 h-6 text-gray-500" />
-                        </div>
-                        <p className="text-gray-600">Drop your file here or click to browse</p>
-                        <p className="text-xs text-gray-500">Maximum file size: 25MB</p>
-                    </div>
-                    )}
-                    <input
-                    id="modal-file-input"
-                    type="file"
-                    className="hidden"
-                    onChange={(e) => {
-                        const selectedFile = e.target.files?.[0];
-                        if (selectedFile && selectedFile.size <= 25 * 1024 * 1024) {
-                        setFile(selectedFile);
-                        } else {
-                        toast.error("File size must be less than 25MB");
-                        }
-                    }}
-                    />
-                </div>
 
-                {/* Signers Section */}
-                <div className="space-y-3">
-                    <label className="text-sm font-medium text-gray-700">Signers</label>
-                    <div className="space-y-2">
-                    {signersList.map((signer, index) => (
-                        <div 
-                        key={index}
-                        className="group flex items-center space-x-2 animate-in slide-in-from-left duration-200"
-                        style={{ animationDelay: `${index * 50}ms` }}
-                        >
-                        <input
-                            type="text"
-                            value={signer.address}
-                            onChange={(e) => {
-                            const newList = [...signersList];
-                            newList[index].address = e.target.value;
-                            setSignersList(newList);
-                            }}
-                            placeholder="Enter signer address"
-                            className="flex-1 px-4 py-2 rounded-lg bg-white border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-colors text-sm"
-                        />
-                        {signersList.length > 1 && (
-                            <button
-                            onClick={() => {
-                                const newList = signersList.filter((_, i) => i !== index);
-                                setSignersList(newList);
-                            }}
-                            className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
-                            >
-                            <X className="w-4 h-4" />
-                            </button>
-                        )}
-                        </div>
-                    ))}
-                    </div>
-                    <button
-                    onClick={() => setSignersList([...signersList, { address: '' }])}
-                    className="w-full px-4 py-2 rounded-lg border border-dashed border-gray-300 hover:border-blue-500 text-gray-500 hover:text-blue-600 transition-all text-sm focus:outline-none"
-                    >
-                    + Add another signer
-                    </button>
-                </div>
-                </div>
 
-            {/* Actions */}
-            <div className="border-t border-gray-200 p-6">
-              <div className="flex space-x-3">
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="flex-1 px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors text-sm font-medium text-gray-800"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleCreateDocument}
-                  disabled={loading || !file || signersList.every(s => !s.address.trim())}
-                  className="flex-1 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors text-sm font-medium text-white disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading ? (
-                    <div className="flex items-center justify-center space-x-2">
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span>Uploading...</span>
-                    </div>
-                  ) : (
-                    'Upload Document'
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* View Document Modal */}
       {viewingDoc && (
@@ -692,8 +418,12 @@ export default function SharedDocs() {
           <div className="bg-gray-900 rounded-xl w-full h-full flex flex-col">
             <div className="flex items-center justify-between p-4 border-b border-gray-800">
               <div className="flex items-center space-x-3">
-                <div className={`w-8 h-8 rounded-lg ${STATUS_STYLES[viewingDoc.is_completed ? 'completed' : 'pending'].bg} flex items-center justify-center`}>
-                  <FileText className={`w-4 h-4 ${STATUS_STYLES[viewingDoc.is_completed ? 'completed' : 'pending'].icon}`} />
+                <div
+                  className={`w-8 h-8 rounded-lg ${STATUS_STYLES[viewingDoc.is_completed ? "completed" : "pending"].bg} flex items-center justify-center`}
+                >
+                  <FileText
+                    className={`w-4 h-4 ${STATUS_STYLES[viewingDoc.is_completed ? "completed" : "pending"].icon}`}
+                  />
                 </div>
                 <div>
                   <h3 className="font-medium">Document {viewingDoc.id}</h3>
@@ -728,23 +458,12 @@ export default function SharedDocs() {
                   title="Document Preview"
                 />
               ) : (
-                <div className="flex items-center justify-center h-full text-gray-400">
-                  Loading document...
-                </div>
+                <div className="flex items-center justify-center h-full text-gray-400">Loading document...</div>
               )}
             </div>
           </div>
         </div>
       )}
-
-      {/* Mobile Overlay */}
-      {isMobile && !isSidebarCollapsed && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-10"
-          onClick={() => setIsSidebarCollapsed(true)}
-        />
-      )}
     </div>
   );
-};
- 
+}

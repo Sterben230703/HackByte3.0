@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import SharedDocs from "../SharedDocs";
 import {
   LayoutDashboard,
   Grid,
@@ -29,15 +30,15 @@ export default function Sidebar({
   setIsSidebarCollapsed,
   isMobile,
 }: SidebarProps) {
+  const [isSharedDocsOpen, setIsSharedDocsOpen] = useState(false);
   const [isCategorizeOpen, setIsCategorizeOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   const navigationItems = [
     { id: "dashboard", icon: <LayoutDashboard className="w-5 h-5" />, label: "Dashboard" },
-    { id: "documents", icon: <IoDocument className="w-5 h-5" />, label: "Documents" },
     { id: "analytics", icon: <IoAnalytics className="w-5 h-5" />, label: "Analytics" },
     { id: "Categorized", icon: <Grid className="w-5 h-5" />, label: "Categorized", onClick: () => setIsCategorizeOpen(true) },
-    { id: "Shared", icon: <Share2 className="w-5 h-5" />, label: "Shared", path: "/shared-docs" },
+    { id: "Shared", icon: <Share2 className="w-5 h-5" />, label: "Shared", onClick: () => setIsSharedDocsOpen(true) },
     { id: "chat", icon: <MessageSquare className="w-5 h-5" />, label: "Chat Assistant", onClick: () => setIsChatOpen(true) },
   ];
 
@@ -118,6 +119,13 @@ export default function Sidebar({
       <Dialog open={isChatOpen} onOpenChange={setIsChatOpen}>
         <DialogContent className="max-w-4xl w-[90vw] h-[90vh] p-0">
           <ChatWithDocs isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
+        </DialogContent>
+      </Dialog>
+
+      {/* Shared Docs Dialog */}
+      <Dialog open={isSharedDocsOpen} onOpenChange={setIsSharedDocsOpen}>
+        <DialogContent className="max-w-7xl w-[90vw] h-[90vh] p-0">
+          <SharedDocs isOpen={isSharedDocsOpen} onClose={() => setIsSharedDocsOpen(false)} />
         </DialogContent>
       </Dialog>
     </>

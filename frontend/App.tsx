@@ -5,7 +5,6 @@ import { WalletSelector } from "./components/WalletSelector";
 import ContractManagement from "@/components/ContractManagement";
 import SigningDocument from "@/components/SigningDocument";
 import Categorize from "@/components/Categorize";
-import SharedDocs from "./components/SharedDocs";
 
 function App() {
   const { connected } = useWallet();
@@ -18,7 +17,6 @@ function App() {
             <Routes>
               <Route path="/" element={<ContractManagement />} />
               <Route path="/categorize" element={<Categorize />} />
-              <Route path="/shared-docs" element={<SharedDocs />} />
               <Route path="/sign/:id" element={<SigningDocument />} />
             </Routes>
           </Router>
