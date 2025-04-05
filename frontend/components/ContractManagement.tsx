@@ -302,6 +302,7 @@ export default function ContractManagement() {
   const DocumentCard = ({ doc }: { doc: Document }) => {
     const status = doc.is_completed ? "completed" : "pending";
     const styles = STATUS_STYLES[status];
+    
 
     return (
       <div
@@ -309,45 +310,73 @@ export default function ContractManagement() {
       >
         <div className={`absolute top-0 left-4 right-0 h-2 ${styles.bg} rounded-b-lg`}></div>
 
-        <Link to={`/sign/${doc.id}`}>
-          <div className="p-4 md:p-6">
-            <div className="flex items-start justify-between mb-4">
-              <div className={`w-10 h-10 rounded-lg ${styles.bg} flex items-center justify-center`}>
-                <FileText className={`w-5 h-5 ${styles.icon}`} />
+        <Link to={`/sign/${doc.id}`} className="block h-full transition-all hover:transform hover:translate-y-[-2px]">
+          <div className="h-full flex flex-col border border-gray-200 shadow-sm hover:shadow rounded-xl overflow-hidden bg-white">
+            {/* Document Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-100">
+              <div className="flex items-center space-x-3">
+                <div className={`w-10 h-10 rounded-full ${styles.bg} flex items-center justify-center`}>
+                  <FileText className={`w-5 h-5 ${styles.icon}`} />
+                </div>
+                <div>
+                  <h4 className="font-medium text-gray-800 truncate">Document {doc.id}</h4>
+                </div>
               </div>
-              <div className="flex space-x-2">
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleViewDocument(doc);
-                  }}
-                  className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-                >
-                  <Eye className="w-4 h-4 text-gray-600" />
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleShare(doc.id);
-                  }}
-                  className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-                >
-                  <Share2 className="w-4 h-4 text-gray-600" />
-                </button>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <h4 className="font-medium text-gray-800">Document {doc.id}</h4>
-              <p className="text-sm text-gray-500">
-                {doc.signatures.length} of {doc.signers.length} signatures
-              </p>
-              <div className={`text-xs ${styles.text} flex items-center space-x-1`}>
+              <div
+                className={`px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1 ${
+                  status === "completed" ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"
+                }`}
+              >
                 <span
-                  className={`w-2 h-2 rounded-full ${status === "completed" ? "bg-blue-500" : "bg-amber-500"}`}
+                  className={`w-1.5 h-1.5 rounded-full ${status === "completed" ? "bg-green-500" : "bg-amber-500"}`}
                 ></span>
                 <span>{status === "completed" ? "Completed" : "Pending"}</span>
               </div>
+            </div>
+
+            {/* Document Content */}
+            <div className="p-4 flex-1 flex flex-col justify-between">
+              <div className="space-y-3">
+                {/* Progress Bar */}
+                <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                  <div
+                    className="h-full bg-blue-500 rounded-full"
+                    style={{ width: `${(doc.signatures.length / doc.signers.length) * 100}%` }}
+                  ></div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 font-medium">Signatures</span>
+                  <span className="text-sm text-gray-800 font-bold">
+                    {doc.signatures.length}/{doc.signers.length}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Document Footer */}
+            <div className="flex items-center justify-between bg-gray-50 p-3 border-t border-gray-100">
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleViewDocument(doc);
+                }}
+                className="flex items-center space-x-1 text-sm text-gray-600 hover:text-blue-600 transition-colors"
+              >
+                <Eye className="w-4 h-4" />
+                <span>View</span>
+              </button>
+
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleShare(doc.id);
+                }}
+                className="flex items-center space-x-1 text-sm text-gray-600 hover:text-blue-600 transition-colors"
+              >
+                <Share2 className="w-4 h-4" />
+                <span>Share</span>
+              </button>
             </div>
           </div>
         </Link>
@@ -428,17 +457,8 @@ export default function ContractManagement() {
         <div className="flex-1 ml-20 md:ml-0 overflow-y-auto">
           {/* Header */}
           <div className="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
-            <div className="px-4 md:px-6 py-4 flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                  <span className="text-xs md:text-sm text-gray-600">Completed</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 rounded-full bg-amber-500"></div>
-                  <span className="text-xs md:text-sm text-gray-600">Pending</span>
-                </div>
-              </div>
+            <div className="px-4 md:px-6 py-4 flex items-center justify-end">
+              
               {!account ? (
                 <button
                   onClick={() => connect("Petra" as WalletName<"Petra">)}
@@ -454,9 +474,12 @@ export default function ContractManagement() {
                   >
                     {`${account.address.slice(0, 6)}...${account.address.slice(-4)}`}
                   </Button>
-                  <button onClick={() => disconnect()} className="p-2 rounded-lg hover:bg-gray-100">
-                    <X className="w-4 h-4 text-gray-600" />
-                  </button>
+                  <button
+                  onClick={() => disconnect()}
+                  className="px-4 py-2 text-sm rounded-lg border border-red-500 text-red-500 hover:bg-red-50 transition-colors"
+                >
+                  Logout
+                </button>
                 </div>
               )}
             </div>
@@ -494,8 +517,7 @@ export default function ContractManagement() {
                       <BarChart
                         data={[
                           {
-                            name: "Today",
-                            completed: documents.filter((doc) => doc.is_completed).length, 
+                            completed: documents.filter((doc) => doc.is_completed).length,
                           },
                         ]}
                         margin={{ top: 10, right: 10, left: 10, bottom: 5 }}
@@ -533,7 +555,6 @@ export default function ContractManagement() {
                       <BarChart
                         data={[
                           {
-                          
                             pending: documents.filter((doc) => !doc.is_completed).length,
                           },
                         ]}
@@ -867,20 +888,23 @@ export default function ContractManagement() {
       {/* Account Info Modal */}
       {showAccountInfo && (
         <div
-          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4"
           onClick={() => setShowAccountInfo(false)}
         >
-          <div className="bg-gray-900 rounded-xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+          <div 
+            className="bg-white rounded-xl w-full max-w-md p-6 shadow-lg" 
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-semibold">Account Details</h3>
+              <h3 className="text-xl font-semibold text-blue-900">Account Details</h3>
               <button
                 onClick={() => setShowAccountInfo(false)}
-                className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
+                className="p-2 rounded-lg hover:bg-blue-100 transition-colors"
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5 text-black-900" />
               </button>
             </div>
-            <div className="space-y-8">
+            <div className="space-y-8 text-black-800">
               <AccountInfo />
               <NetworkInfo />
             </div>
