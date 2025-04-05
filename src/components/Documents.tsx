@@ -1,11 +1,56 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
 import { FileText, Search, Upload } from 'lucide-react';
+
+const PINATA_API_KEY = import.meta.env.VITE_PINATA_API_KEY;
+const PINATA_SECRET_API_KEY = import.meta.env.VITE_PINATA_SECRET_API_KEY;
 
 interface DocumentsProps {
   userId: string;
 }
 
 const Documents = ({ userId }: DocumentsProps) => {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState('');
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setSelectedFile(event.target.files[0]);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      setUploadMessage('Please select a file to upload.');
+      return;
+    }
+
+    setUploading(true);
+    setUploadMessage('');
+
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+
+    try {
+      const response = await axios.post('https://api.pinata.cloud/pinning/pinFileToIPFS', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          pinata_api_key: PINATA_API_KEY,
+          pinata_secret_api_key: PINATA_SECRET_API_KEY,
+        },
+      });
+
+      setUploadMessage(`File uploaded successfully! IPFS Hash: ${response.data.IpfsHash}`);
+    } catch (error) {
+      setUploadMessage('Failed to upload file. Please try again.');
+      console.error(error);
+    } finally {
+      setUploading(false);
+      setSelectedFile(null);
+    }
+  };
+
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-8">
@@ -13,11 +58,37 @@ const Documents = ({ userId }: DocumentsProps) => {
           <h1 className="text-2xl font-bold text-gray-900">Documents</h1>
           <p className="text-gray-600">Manage and organize your documents</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-          <Upload className="h-5 w-5" />
-          Upload Files
-        </button>
+        <div className="flex items-center gap-4">
+          <input
+            type="file"
+            onChange={handleFileChange}
+            className="hidden"
+            id="file-upload"
+          />
+          <label
+            htmlFor="file-upload"
+            className="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg cursor-pointer hover:bg-gray-300 transition-colors"
+          >
+            <Upload className="h-5 w-5" />
+            Choose File
+          </label>
+          <button
+            onClick={handleUpload}
+            disabled={uploading}
+            className={`flex items-center gap-2 px-4 py-2 ${
+              uploading ? 'bg-gray-400' : 'bg-blue-600'
+            } text-white rounded-lg hover:bg-blue-700 transition-colors`}
+          >
+            {uploading ? 'Uploading...' : 'Upload to Pinata'}
+          </button>
+        </div>
       </div>
+
+      {uploadMessage && (
+        <div className="mb-4 p-4 bg-gray-100 text-gray-700 rounded-lg">
+          {uploadMessage}
+        </div>
+      )}
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="p-4 border-b border-gray-100">
