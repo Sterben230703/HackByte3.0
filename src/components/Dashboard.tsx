@@ -1,6 +1,8 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { FileText, PieChart as PieChartIcon, Image } from 'lucide-react';
+import { FileText, Image } from 'lucide-react';
+import axios from 'axios';
 
 interface DashboardProps {
   userId: string;
@@ -10,16 +12,8 @@ interface StatCardProps {
   Icon: React.ElementType;
   label: string;
   value: string | number;
-  change: string | number;
+  change?: string | number;
 }
-
-const data = [
-  { name: 'Jan', documents: 4, expenses: 24, images: 12 },
-  { name: 'Feb', documents: 8, expenses: 35, images: 18 },
-  { name: 'Mar', documents: 15, expenses: 45, images: 25 },
-  { name: 'Apr', documents: 25, expenses: 52, images: 32 },
-  { name: 'May', documents: 32, expenses: 58, images: 38 },
-];
 
 const StatCard = ({ Icon, label, value, change }: StatCardProps) => (
   <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
@@ -27,9 +21,11 @@ const StatCard = ({ Icon, label, value, change }: StatCardProps) => (
       <div className="bg-blue-50 p-3 rounded-lg">
         <Icon className="h-6 w-6 text-blue-600" />
       </div>
-      <span className="text-sm font-medium text-green-600 bg-green-50 px-2.5 py-0.5 rounded-full">
-        +{change}%
-      </span>
+      {change !== undefined && (
+        <span className="text-sm font-medium text-green-600 bg-green-50 px-2.5 py-0.5 rounded-full">
+          +{change}%
+        </span>
+      )}
     </div>
     <h3 className="text-sm font-medium text-gray-600 mb-1">{label}</h3>
     <p className="text-2xl font-semibold text-gray-900">{value}</p>
@@ -37,6 +33,52 @@ const StatCard = ({ Icon, label, value, change }: StatCardProps) => (
 );
 
 export function Dashboard({ userId }: DashboardProps) {
+  const [totalDocuments, setTotalDocuments] = useState<number>(0);
+  const [totalImages, setTotalImages] = useState<number>(0);
+
+  // Hardcoded data for the graph
+  const graphData = [
+    { name: 'Jan', documents: 10, images: 5 },
+    { name: 'Feb', documents: 15, images: 8 },
+    { name: 'Mar', documents: 2, images: 12 },
+    { name: 'Apr', documents: 25, images: 18 },
+    { name: 'May', documents: 30, images: 2 },
+  ];
+
+  const fetchPinataData = async () => {
+    try {
+      const response = await axios.get('https://api.pinata.cloud/data/pinList', {
+        headers: {
+          pinata_api_key: import.meta.env.VITE_PINATA_API_KEY,
+          pinata_secret_api_key: import.meta.env.VITE_PINATA_SECRET_API_KEY,
+        },
+      });
+
+      const files = response.data.rows;
+
+      // Count documents and images
+      const documentCount = files.filter((file: any) =>
+        file.metadata.name?.endsWith('.pdf') || file.metadata.name?.endsWith('.docx')
+      ).length;
+
+      const imageCount = files.filter((file: any) =>
+        file.metadata.name?.endsWith('.jpeg') ||
+        file.metadata.name?.endsWith('.jpg') ||
+        file.metadata.name?.endsWith('.png') ||
+        file.metadata.name?.endsWith('.gif')
+      ).length;
+
+      setTotalDocuments(documentCount);
+      setTotalImages(imageCount);
+    } catch (error) {
+      console.error('Error fetching data from Pinata:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPinataData();
+  }, []);
+
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="mb-8">
@@ -48,20 +90,12 @@ export function Dashboard({ userId }: DashboardProps) {
         <StatCard
           Icon={FileText}
           label="Total Documents"
-          value={32}
-          change={12.5}
-        />
-        <StatCard
-          Icon={PieChartIcon}
-          label="Total Expenses"
-          value="$2,450"
-          change={8.2}
+          value={totalDocuments}
         />
         <StatCard
           Icon={Image}
           label="Processed Images"
-          value={38}
-          change={15.3}
+          value={totalImages}
         />
       </div>
 
@@ -69,7 +103,7 @@ export function Dashboard({ userId }: DashboardProps) {
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Activity Overview</h2>
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+            <AreaChart data={graphData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis />
@@ -80,14 +114,6 @@ export function Dashboard({ userId }: DashboardProps) {
                 stackId="1"
                 stroke="#3B82F6"
                 fill="#3B82F6"
-                fillOpacity={0.2}
-              />
-              <Area
-                type="monotone"
-                dataKey="expenses"
-                stackId="1"
-                stroke="#10B981"
-                fill="#10B981"
                 fillOpacity={0.2}
               />
               <Area

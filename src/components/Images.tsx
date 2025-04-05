@@ -20,11 +20,14 @@ export function Images({ userId }: ImagesProps) {
 
   const loadImages = async () => {
     try {
+      console.log('Fetching images for user:', userId);
       const userImages = await getUserImages(userId);
-      // Map the images to include filename from the url
-      const imagesWithFilename = userImages.map(img => ({
+      console.log('Fetched images:', userImages);
+
+      // Map the images to include filename from the URL
+      const imagesWithFilename = userImages.map((img) => ({
         ...img,
-        filename: img.url.split('/').pop() || 'unknown'
+        filename: img.url.split('/').pop() || 'unknown',
       }));
       setImages(imagesWithFilename);
       setError(null);
@@ -47,6 +50,8 @@ export function Images({ userId }: ImagesProps) {
         const formData = new FormData();
         formData.append('file', file);
 
+        console.log('Uploading file:', file.name);
+
         // Upload image file
         const uploadResponse = await fetch('/api/upload', {
           method: 'POST',
@@ -58,6 +63,7 @@ export function Images({ userId }: ImagesProps) {
         }
 
         const { url } = await uploadResponse.json();
+        console.log('Uploaded file URL:', url);
 
         // Save image metadata
         await saveImage({
