@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FileText, Search, Upload } from 'lucide-react';
 
@@ -19,6 +19,31 @@ const Documents = ({ userId }: DocumentsProps) => {
   const [uploading, setUploading] = useState(false);
   const [uploadMessage, setUploadMessage] = useState('');
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+
+  // Fetch all pinned files from Pinata
+  const fetchPinnedFiles = async () => {
+    try {
+      const response = await axios.get('https://api.pinata.cloud/data/pinList', {
+        headers: {
+          pinata_api_key: PINATA_API_KEY,
+          pinata_secret_api_key: PINATA_SECRET_API_KEY,
+        },
+      });
+
+      const files = response.data.rows.map((file: any) => ({
+        name: file.metadata.name || 'Unnamed File',
+        ipfsHash: file.ipfs_pin_hash,
+      }));
+
+      setUploadedFiles(files);
+    } catch (error) {
+      console.error('Failed to fetch pinned files:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPinnedFiles();
+  }, []);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
