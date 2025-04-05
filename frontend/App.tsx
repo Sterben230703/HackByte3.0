@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardHeader, CardTitle } from "@/components/ui/card";
 import { WalletSelector } from "./components/WalletSelector";
 import ContractManagement from "@/components/ContractManagement";
 import SigningDocument from "@/components/SigningDocument";
@@ -25,6 +25,7 @@ function App() {
             <ChatBot />
           </Router>
         ) : (
+<<<<<<< HEAD
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md">
             <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-blue-50">
               <CardHeader className="pb-2 text-center border-b border-blue-100">
@@ -112,6 +113,13 @@ function App() {
                 <p className="text-xs text-center text-gray-500">By connecting, you agree to our Terms of Service</p>
               </CardFooter>
             </Card>
+=======
+          <div className="flex items-center justify-center h-full">
+            <CardHeader>
+              <CardTitle>To get started Connect a wallet</CardTitle>
+              <WalletSelector />
+            </CardHeader>
+>>>>>>> 2e325f09df8b4cab4c9c1eb034d7fda4b9386b81
           </div>
         )}
       </main>
