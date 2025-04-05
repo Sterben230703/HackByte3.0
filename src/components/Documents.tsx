@@ -9,10 +9,16 @@ interface DocumentsProps {
   userId: string;
 }
 
+interface UploadedFile {
+  name: string;
+  ipfsHash: string;
+}
+
 const Documents = ({ userId }: DocumentsProps) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadMessage, setUploadMessage] = useState('');
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -41,7 +47,14 @@ const Documents = ({ userId }: DocumentsProps) => {
         },
       });
 
-      setUploadMessage(`File uploaded successfully! IPFS Hash: ${response.data.IpfsHash}`);
+      const ipfsHash = response.data.IpfsHash;
+      setUploadMessage(`File uploaded successfully! IPFS Hash: ${ipfsHash}`);
+
+      // Add the uploaded file to the list
+      setUploadedFiles((prevFiles) => [
+        ...prevFiles,
+        { name: selectedFile.name, ipfsHash },
+      ]);
     } catch (error) {
       setUploadMessage('Failed to upload file. Please try again.');
       console.error(error);
@@ -103,17 +116,24 @@ const Documents = ({ userId }: DocumentsProps) => {
         </div>
 
         <div className="divide-y divide-gray-100">
-          {[1, 2, 3, 4, 5].map((item) => (
-            <div key={item} className="p-4 hover:bg-gray-50 transition-colors">
+          {uploadedFiles.map((file, index) => (
+            <div key={index} className="p-4 hover:bg-gray-50 transition-colors">
               <div className="flex items-center gap-4">
                 <div className="p-2 bg-blue-50 rounded-lg">
                   <FileText className="h-6 w-6 text-blue-600" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-sm font-medium text-gray-900">Document_{item}.pdf</h3>
-                  <p className="text-sm text-gray-500">Added 2 hours ago • 2.4 MB</p>
+                  <h3 className="text-sm font-medium text-gray-900">{file.name}</h3>
+                  <p className="text-sm text-gray-500">
+                    IPFS Hash: <a href={`https://gateway.pinata.cloud/ipfs/${file.ipfsHash}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{file.ipfsHash}</a>
+                  </p>
                 </div>
-                <button className="text-sm text-blue-600 hover:text-blue-700">View</button>
+                <button
+                  onClick={() => window.open(`https://gateway.pinata.cloud/ipfs/${file.ipfsHash}`, '_blank')}
+                  className="text-sm text-blue-600 hover:text-blue-700"
+                >
+                  View
+                </button>
               </div>
             </div>
           ))}
