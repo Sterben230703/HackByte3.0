@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { WalletSelector } from "./components/WalletSelector";
-import SigningDocument from "@/components/SigningDocument";
+import { WalletSelector } from "./components/Selector";
+import SigningDocument from "@/components/DocSign";
 import Categorize from "@/components/Category";
 import { Analytics } from "./components/Analytics";
 import ContractManagement from "./components/Main";

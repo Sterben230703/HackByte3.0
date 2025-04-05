@@ -13,7 +13,7 @@ import { toast, Toaster } from 'react-hot-toast';
 import axios from 'axios';
 import { aptosClient } from '@/utils/aptosClient';
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
-import { MonthlyBarChart } from './MonthlyBarChart.tsx';
+import { MonthlyBarChart } from './BarChart.tsx';
 
 type CategoryType = 'financial';
 

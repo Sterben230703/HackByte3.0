@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import SharedDocs from "../SharedDocs";
+import SharedDocs from "../Share";
 import {
   LayoutDashboard,
   Grid,
