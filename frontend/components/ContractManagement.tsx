@@ -302,7 +302,6 @@ export default function ContractManagement() {
   const DocumentCard = ({ doc }: { doc: Document }) => {
     const status = doc.is_completed ? "completed" : "pending";
     const styles = STATUS_STYLES[status];
-    
 
     return (
       <div
@@ -458,7 +457,6 @@ export default function ContractManagement() {
           {/* Header */}
           <div className="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
             <div className="px-4 md:px-6 py-4 flex items-center justify-end">
-              
               {!account ? (
                 <button
                   onClick={() => connect("Petra" as WalletName<"Petra">)}
@@ -475,11 +473,11 @@ export default function ContractManagement() {
                     {`${account.address.slice(0, 6)}...${account.address.slice(-4)}`}
                   </Button>
                   <button
-                  onClick={() => disconnect()}
-                  className="px-4 py-2 text-sm rounded-lg border border-red-500 text-red-500 hover:bg-red-50 transition-colors"
-                >
-                  Logout
-                </button>
+                    onClick={() => disconnect()}
+                    className="px-4 py-2 text-sm rounded-lg border border-red-500 text-red-500 hover:bg-red-50 transition-colors"
+                  >
+                    Logout
+                  </button>
                 </div>
               )}
             </div>
@@ -711,7 +709,7 @@ export default function ContractManagement() {
               {/* File Upload Section */}
               <div
                 className={`relative border-2 border-dashed rounded-xl p-6 text-center transition-all duration-200 
-                  ${file ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-blue-400"}`}
+            ${file ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-blue-400"}`}
               >
                 {file ? (
                   <div className="space-y-2">
@@ -756,7 +754,7 @@ export default function ContractManagement() {
 
               {/* Signers Section */}
               <div className="space-y-3">
-                <label className="text-sm font-medium text-gray-300">Signers</label>
+                <label className="text-sm font-medium text-gray-700">Signers</label>
                 <div className="space-y-2">
                   {signersList.map((signer, index) => (
                     <div
@@ -773,7 +771,7 @@ export default function ContractManagement() {
                           setSignersList(newList);
                         }}
                         placeholder="Enter signer address"
-                        className="flex-1 px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 outline-none transition-colors text-sm"
+                        className="flex-1 px-4 py-2 rounded-lg bg-white border border-gray-300 focus:border-blue-500 outline-none transition-colors text-sm text-gray-800"
                       />
                       {signersList.length > 1 && (
                         <button
@@ -781,7 +779,7 @@ export default function ContractManagement() {
                             const newList = signersList.filter((_, i) => i !== index);
                             setSignersList(newList);
                           }}
-                          className="p-2 rounded-lg hover:bg-gray-800 text-gray-400 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
+                          className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
                         >
                           <X className="w-4 h-4" />
                         </button>
@@ -791,7 +789,7 @@ export default function ContractManagement() {
                 </div>
                 <button
                   onClick={() => setSignersList([...signersList, { address: "" }])}
-                  className="w-full px-4 py-2 rounded-lg border border-dashed border-gray-700 hover:border-blue-500 text-gray-400 hover:text-blue-400 transition-all text-sm focus:outline-none"
+                  className="w-full px-4 py-2 rounded-lg border border-dashed border-gray-300 hover:border-blue-500 text-gray-600 hover:text-blue-600 transition-all text-sm focus:outline-none"
                 >
                   + Add another signer
                 </button>
@@ -799,18 +797,18 @@ export default function ContractManagement() {
             </div>
 
             {/* Actions */}
-            <div className="border-t border-gray-800 p-6">
+            <div className="border-t border-gray-200 p-6">
               <div className="flex space-x-3">
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="flex-1 px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors text-sm font-medium"
+                  className="flex-1 px-4 py-2 rounded-lg bg-gray-900 hover:bg-black transition-colors text-white text-sm font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleCreateDocument}
                   disabled={loading || !file || signersList.every((s) => !s.address.trim())}
-                  className="flex-1 px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors text-white text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <div className="flex items-center justify-center space-x-2">
@@ -891,10 +889,7 @@ export default function ContractManagement() {
           className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4"
           onClick={() => setShowAccountInfo(false)}
         >
-          <div 
-            className="bg-white rounded-xl w-full max-w-md p-6 shadow-lg" 
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="bg-white rounded-xl w-full max-w-md p-6 shadow-lg" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-semibold text-blue-900">Account Details</h3>
               <button
