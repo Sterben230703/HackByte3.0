@@ -33,16 +33,16 @@ interface Document {
 
 const STATUS_STYLES = {
   completed: {
-    bg: 'bg-blue-500/10',
-    border: 'border-blue-500/20',
-    text: 'text-blue-400',
-    icon: 'text-blue-400',
+    bg: 'bg-blue-100',
+    border: 'border-blue-300',
+    text: 'text-blue-700',
+    icon: 'text-blue-600',
   },
   pending: {
-    bg: 'bg-yellow-500/10',
-    border: 'border-yellow-500/20',
-    text: 'text-yellow-400',
-    icon: 'text-yellow-400',
+    bg: 'bg-amber-100',
+    border: 'border-amber-300',
+    text: 'text-amber-700',
+    icon: 'text-amber-600',
   }
 };
 
@@ -126,10 +126,10 @@ const SigningPage: React.FC = () => {
       };
       await signAndSubmitTransaction(payload);
       toast.custom((_t) => (
-        <div className="bg-gray-800 text-white px-6 py-4 shadow-xl rounded-lg border border-gray-700 animate-in slide-in-from-bottom-5">
+        <div className="bg-white text-gray-800 px-6 py-4 shadow-xl rounded-lg border border-blue-200 animate-in slide-in-from-bottom-5">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
-              <Check className="w-4 h-4 text-blue-400" />
+            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+              <Check className="w-4 h-4 text-blue-600" />
             </div>
             <p>Document signed successfully!</p>
           </div>
@@ -153,10 +153,10 @@ const SigningPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#1A1B1E] flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="space-y-4 text-center">
-          <div className="w-16 h-16 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin mx-auto" />
-          <p className="text-gray-400 animate-pulse">Loading document...</p>
+          <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto" />
+          <p className="text-gray-600 animate-pulse">Loading document...</p>
         </div>
       </div>
     );
@@ -164,18 +164,18 @@ const SigningPage: React.FC = () => {
 
   if (!document) {
     return (
-      <div className="min-h-screen bg-[#1A1B1E] flex items-center justify-center">
-        <div className="text-center space-y-4 p-6 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700">
-          <div className="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center mx-auto">
-            <X className="w-8 h-8 text-red-400" />
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center space-y-4 p-6 bg-white rounded-xl border border-gray-200 shadow-lg">
+          <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto">
+            <X className="w-8 h-8 text-red-600" />
           </div>
-          <h2 className="text-xl font-medium text-gray-200">Document Not Found</h2>
-          <p className="text-gray-400">The requested document could not be found.</p>
+          <h2 className="text-xl font-medium text-gray-800">Document Not Found</h2>
+          <p className="text-gray-600">The requested document could not be found.</p>
           <button
             onClick={() => navigate('/')}
-            className="px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors text-sm"
+            className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors text-white flex items-center justify-center gap-2 mx-auto"
           >
-            <IoHome /> Return Home
+            <IoHome className="w-4 h-4" /> Return Home
           </button>
         </div>
       </div>
@@ -186,144 +186,171 @@ const SigningPage: React.FC = () => {
   const styles = STATUS_STYLES[status];
 
   return (
-    <div className="min-h-screen bg-[#1A1B1E] text-gray-100">
+    <div className="min-h-screen bg-gray-50 text-gray-800">
       <Toaster />
-      <div className="container mx-auto px-4 py-6">
+      <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="flex items-center space-x-3">
-            <div className={`w-10 h-10 rounded-lg ${styles.bg} flex items-center justify-center`}>
-              <FileText className={`w-5 h-5 ${styles.icon}`} />
+        <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div className="flex items-center space-x-4">
+            <div className={`w-12 h-12 rounded-full ${styles.bg} flex items-center justify-center ${styles.border} border`}>
+              <FileText className={`w-6 h-6 ${styles.icon}`} />
             </div>
             <div>
-              <h1 className="text-2xl font-bold">Document #{document.id}</h1>
-              <p className="text-sm text-gray-400">
+              <h1 className="text-2xl font-bold text-gray-900">Document #{document.id}</h1>
+              <p className="text-sm text-gray-500">
                 Sign and verify document details
               </p>
             </div>
           </div>
           <button
             onClick={() => navigate('/')}
-            className="px-4 py-3 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors text-sm self-start md:self-auto flex text-base"
+            className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors text-gray-800 self-start md:self-auto flex items-center gap-2 border border-gray-200"
           >
-            <IoHome className='w-5 h-5 mx-2 ' /> Return to Dashboard
+            <IoHome className="w-5 h-5" /> Return to Dashboard
           </button>
         </div>
 
-        {/* Document Info Cards */}
-        <div className="grid md:grid-cols-3 gap-4 mb-6">
-          <div className="p-4 rounded-xl bg-gray-800/50 backdrop-blur-sm border border-gray-700 space-y-2">
-            <div className="flex items-center space-x-2 text-gray-400">
-              <Shield className="w-4 h-4" />
-              <span className="text-sm">Status</span>
-            </div>
-            <div className={`flex items-center space-x-2 ${styles.text}`}>
-              <span className={`w-2 h-2 rounded-full ${status === 'completed' ? 'bg-blue-500' : 'bg-yellow-500'}`} />
-              <span className="font-medium capitalize">{status}</span>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-gray-800/50 backdrop-blur-sm border border-gray-700 space-y-2">
-            <div className="flex items-center space-x-2 text-gray-400">
-              <PenTool className="w-4 h-4" />
-              <span className="text-sm">Signatures</span>
-            </div>
-            <p className="font-medium">{document.signatures.length} of {document.signers.length}</p>
-          </div>
-
-          <div className="p-4 rounded-xl bg-gray-800/50 backdrop-blur-sm border border-gray-700 space-y-2">
-            <div className="flex items-center space-x-2 text-gray-400">
-              <Clock className="w-4 h-4" />
-              <span className="text-sm">Created by</span>
-            </div>
-            <p className="font-medium truncate">{document.creator}</p>
-          </div>
-        </div>
-
-        {/* Document Viewer */}
-        <div className="relative rounded-xl bg-gray-800/50 backdrop-blur-sm border border-gray-700 mb-6">
-          <div className="absolute top-4 right-4 z-10 flex space-x-2">
-            <button
-              onClick={() => openIPFSFile(document.content_hash)}
-              className="p-2 rounded-lg bg-gray-900/50 hover:bg-gray-700 transition-colors"
-              title="Open in new tab"
-            >
-              <ExternalLink className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => window.open(`https://ipfs.io/ipfs/${document.content_hash}`, '_blank')}
-              className="p-2 rounded-lg bg-gray-900/50 hover:bg-gray-700 transition-colors"
-              title="View on IPFS"
-            >
-              <Link2 className="w-4 h-4" />
-            </button>
-          </div>
-          {viewDocumentUrl ? (
-            <iframe
-              src={viewDocumentUrl}
-              className="w-full h-[60vh] rounded-xl"
-              title="Document Viewer"
-            />
-          ) : (
-            <div className="h-[60vh] flex items-center justify-center">
-              <div className="w-8 h-8 border-4 border-gray-700 border-t-gray-400 rounded-full animate-spin" />
-            </div>
-          )}
-        </div>
-
-        <ul className="space-y-2">
-          {document.signers.map((signer, index) => {
-            const signature = document.signatures.find(sig => sig.signer === signer);
-            return (
-              <li 
-                key={index} 
-                className="flex items-center justify-between p-3 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-lg"
-              >
-                <div className="flex flex-col">
-                  <span className="truncate">{signer}</span>
-                  {signature && (
-                    <span className="text-xs text-gray-400">
-                      Signed: {formatTimestamp(signature.timestamp)}
-                    </span>
-                  )}
+        <div className="grid lg:grid-cols-4 gap-6">
+          {/* Left Column - Document Info */}
+          <div className="lg:col-span-1 space-y-4">
+            {/* Status Cards */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 divide-y divide-gray-100">
+              <div className="p-4 space-y-2">
+                <div className="flex items-center space-x-2 text-gray-500">
+                  <Shield className="w-4 h-4" />
+                  <span className="text-sm font-medium">Status</span>
                 </div>
-                {signature ? (
-                  <Check className="w-4 h-4 text-blue-400" />
-                ) : (
-                  <X className="w-4 h-4 text-red-400" />
-                )}
-              </li>
-            );
-          })}
-        </ul>
-        {/* Sign Button */}
-        {canSign() ? (
-          <button
-            onClick={handleSignDocument}
-            disabled={signing}
-            className="w-full md:w-auto my-2 px-8 py-3 rounded-lg bg-blue-500 hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-          >
-            {signing ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                <span>Signing...</span>
-              </>
-            ) : (
-              <>
+                <div className={`flex items-center space-x-2 ${styles.text}`}>
+                  <span className={`w-2 h-2 rounded-full ${status === 'completed' ? 'bg-blue-600' : 'bg-amber-500'}`} />
+                  <span className="font-medium capitalize">{status}</span>
+                </div>
+              </div>
+
+              <div className="p-4 space-y-2">
+                <div className="flex items-center space-x-2 text-gray-500">
                   <PenTool className="w-4 h-4" />
-                  <span className=''>Sign Document</span>
-              </>
+                  <span className="text-sm font-medium">Signatures</span>
+                </div>
+                <p className="font-medium">{document.signatures.length} of {document.signers.length}</p>
+              </div>
+
+              <div className="p-4 space-y-2">
+                <div className="flex items-center space-x-2 text-gray-500">
+                  <Clock className="w-4 h-4" />
+                  <span className="text-sm font-medium">Created by</span>
+                </div>
+                <p className="font-medium truncate text-sm">{document.creator}</p>
+              </div>
+            </div>
+
+            {/* Signers List */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+              <h3 className="text-sm font-medium text-gray-500 mb-3">Signers</h3>
+              <ul className="space-y-2">
+                {document.signers.map((signer, index) => {
+                  const signature = document.signatures.find(sig => sig.signer === signer);
+                  return (
+                    <li 
+                      key={index} 
+                      className={`p-3 rounded-lg border ${signature ? 'border-blue-200 bg-blue-50' : 'border-gray-200 bg-gray-50'}`}
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs font-medium text-gray-500">Signer {index + 1}</span>
+                        {signature ? (
+                          <div className="flex items-center text-blue-600">
+                            <Check className="w-4 h-4 mr-1" />
+                            <span className="text-xs">Signed</span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center text-amber-600">
+                            <Clock className="w-4 h-4 mr-1" />
+                            <span className="text-xs">Pending</span>
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-800 truncate">{signer}</p>
+                      {signature && (
+                        <span className="text-xs text-gray-500 block mt-1">
+                          {formatTimestamp(signature.timestamp)}
+                        </span>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+
+            {/* Sign Button */}
+            {canSign() && (
+              <button
+                onClick={handleSignDocument}
+                disabled={signing}
+                className="w-full px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm"
+              >
+                {signing ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span>Signing...</span>
+                  </>
+                ) : (
+                  <>
+                    <PenTool className="w-4 h-4" />
+                    <span>Sign Document</span>
+                  </>
+                )}
+              </button>
             )}
-          </button>
-        ) : (
-          <div className="bg-gray-800/50 backdrop-blur-sm border border-blue-400 rounded-lg p-4 text-center my-2">
-            <p className="text-gray-400">
-              {document.is_completed
-                ? 'This document has been fully signed by all parties.'
-                : 'You are not authorized to sign this document.'}
-            </p>
+            
+            {!canSign() && !loading && (
+              <div className={`p-4 rounded-lg ${document.is_completed ? 'bg-blue-50 border border-blue-200' : 'bg-gray-50 border border-gray-200'} text-center`}>
+                <p className="text-sm text-gray-600">
+                  {document.is_completed
+                    ? 'This document has been fully signed by all parties.'
+                    : 'You are not authorized to sign this document.'}
+                </p>
+              </div>
+            )}
           </div>
-        )}
+
+          {/* Right Column - Document Viewer */}
+          <div className="lg:col-span-3">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden h-full">
+              {/* Document Header */}
+              <div className="bg-gray-50 border-b border-gray-100 p-3 flex justify-between items-center">
+                <span className="text-sm font-medium text-gray-600">Document Preview</span>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => openIPFSFile(document.content_hash)}
+                    className="p-2 rounded-lg hover:bg-gray-200 transition-colors"
+                    title="Open in new tab"
+                  >
+                    <ExternalLink className="w-4 h-4 text-gray-600" />
+                  </button>
+                  <button
+                    onClick={() => window.open(`https://ipfs.io/ipfs/${document.content_hash}`, '_blank')}
+                    className="p-2 rounded-lg hover:bg-gray-200 transition-colors"
+                    title="View on IPFS"
+                  >
+                    <Link2 className="w-4 h-4 text-gray-600" />
+                  </button>
+                </div>
+              </div>
+              
+              {/* Document Viewer */}
+              {viewDocumentUrl ? (
+                <iframe
+                  src={viewDocumentUrl}
+                  className="w-full h-[60vh]"
+                  title="Document Viewer"
+                />
+              ) : (
+                <div className="h-[70vh] flex items-center justify-center">
+                  <div className="w-8 h-8 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin" />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
