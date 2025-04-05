@@ -1,3 +1,9 @@
+# Aptos related files
+.aptos
+blockchain_0/build
+blockchain_0/.aptos
+blockchain_0/aptos.exe
+
 # Logs
 logs
 *.log
@@ -9,8 +15,11 @@ lerna-debug.log*
 
 node_modules
 dist
+build
 dist-ssr
 *.local
+package-lock.json
+pnpm-lock.yaml
 
 # Editor directories and files
 .vscode/*
@@ -22,5 +31,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# template related files
+example-collection/
 .env
-node_modules
