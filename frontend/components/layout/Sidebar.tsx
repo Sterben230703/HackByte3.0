@@ -74,33 +74,19 @@ export default function Sidebar({
         {/* Navigation */}
         <nav className="flex-1 px-4 space-y-1">
           {navigationItems.map((item) => (
-            item.path ? (
-              <Link key={item.id} to={item.path}>
-                <button
-                  onClick={() => setActiveTab(item.id)}
-                  className={`w-full rounded-lg transition-all duration-200 flex items-center ${
-                    isSidebarCollapsed ? "justify-center p-3" : "px-4 py-2 space-x-3"
-                  } ${activeTab === item.id ? ACTIVE_TAB_STYLES : "text-gray-600 hover:text-blue-600 hover:bg-gray-100"}`}
-                >
-                  {item.icon}
-                  {!isSidebarCollapsed && <span>{item.label}</span>}
-                </button>
-              </Link>
-            ) : (
-              <button
-                key={item.id}
-                onClick={() => {
-                  setActiveTab(item.id);
-                  if (item.onClick) item.onClick();
-                }}
-                className={`w-full rounded-lg transition-all duration-200 flex items-center ${
-                  isSidebarCollapsed ? "justify-center p-3" : "px-4 py-2 space-x-3"
-                } ${activeTab === item.id ? ACTIVE_TAB_STYLES : "text-gray-600 hover:text-blue-600 hover:bg-gray-100"}`}
-              >
-                {item.icon}
-                {!isSidebarCollapsed && <span>{item.label}</span>}
-              </button>
-            )
+            <button
+              key={item.id}
+              onClick={() => {
+                setActiveTab(item.id);
+                if (item.onClick) item.onClick();
+              }}
+              className={`w-full rounded-lg transition-all duration-200 flex items-center ${
+                isSidebarCollapsed ? "justify-center p-3" : "px-4 py-2 space-x-3"
+              } ${activeTab === item.id ? ACTIVE_TAB_STYLES : "text-gray-600 hover:text-blue-600 hover:bg-gray-100"}`}
+            >
+              {item.icon}
+              {!isSidebarCollapsed && <span>{item.label}</span>}
+            </button>
           ))}
         </nav>
       </div>

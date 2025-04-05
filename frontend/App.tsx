@@ -5,7 +5,7 @@ import { WalletSelector } from "./components/WalletSelector";
 import SigningDocument from "@/components/SigningDocument";
 import Categorize from "@/components/Category";
 import { Analytics } from "./components/Analytics";
-import ContractManagement from "./components/main";
+import ContractManagement from "./components/Main";
 
 function App() {
   const { connected } = useWallet();
