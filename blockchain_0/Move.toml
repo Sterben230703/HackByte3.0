@@ -1,0 +1,12 @@
+[package]
+name = "first_contract"
+description = "Aptos Move contract for the first contract"
+version = "1.0.0"
+
+[addresses]
+blockchain_0="0x9e0fa019950785ecebc8095f55f2490264452d9e"
+aptos_framework = "0x1"
+
+
+[dependencies]
+AptosFramework = { git = "https://github.com/aptos-labs/aptos-core.git", subdir = "aptos-move/framework/aptos-framework", rev = "testnet" }
