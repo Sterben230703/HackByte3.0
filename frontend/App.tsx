@@ -1,28 +1,28 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { WalletSelector } from "./components/WalletSelector";
 import ContractManagement from "@/components/ContractManagement";
 import SigningDocument from "@/components/SigningDocument";
-import ChatWithDocs from "@/components/ChatWithDocs";
 import Categorize from "@/components/Categorize";
-import SharedDocs from "./components/SharedDocs";
+import SharedDocs from './components/SharedDocs';
+import ChatBot from '@/components/ChatBot';
 
 function App() {
   const { connected } = useWallet();
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col relative">
       <main className="flex-grow">
         {connected ? (
           <Router>
             <Routes>
               <Route path="/" element={<ContractManagement />} />
-              <Route path="/chatwithdocs" element={<ChatWithDocs />} />
               <Route path="/categorize" element={<Categorize />} />
               <Route path="/shared-docs" element={<SharedDocs />} />
               <Route path="/sign/:id" element={<SigningDocument />} />
             </Routes>
+            <ChatBot />
           </Router>
         ) : (
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md">
@@ -105,7 +105,7 @@ function App() {
               <CardFooter className="flex flex-col space-y-4 border-t border-blue-100 pt-4">
                 <div className="mt-2 flex justify-center items-center flex-col ">
                   <p className="text-center text-sm text-gray-500 mb-4">Connect your wallet to get started</p>
-                  <div >
+                  <div>
                     <WalletSelector />
                   </div>
                 </div>
