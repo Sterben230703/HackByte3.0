@@ -5,10 +5,12 @@ import {
   Grid,
   Share2,
   Menu,
+  MessageSquare,
 } from "lucide-react";
 import { IoDocument, IoAnalytics } from "react-icons/io5";
 import { Dialog, DialogContent } from "../ui/dialog";
-import DocumentCategories from "../Categorize"; // Changed to default import
+import DocumentCategories from "../Categorize";
+import ChatWithDocs from "../ChatWithDocs";
 
 const ACTIVE_TAB_STYLES = "bg-gradient-to-r from-blue-500/20 to-blue-500/10 border-l-2 border-blue-500 text-blue-700";
 
@@ -28,6 +30,7 @@ export default function Sidebar({
   isMobile,
 }: SidebarProps) {
   const [isCategorizeOpen, setIsCategorizeOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const navigationItems = [
     { id: "dashboard", icon: <LayoutDashboard className="w-5 h-5" />, label: "Dashboard" },
@@ -35,6 +38,7 @@ export default function Sidebar({
     { id: "analytics", icon: <IoAnalytics className="w-5 h-5" />, label: "Analytics" },
     { id: "Categorized", icon: <Grid className="w-5 h-5" />, label: "Categorized", onClick: () => setIsCategorizeOpen(true) },
     { id: "Shared", icon: <Share2 className="w-5 h-5" />, label: "Shared", path: "/shared-docs" },
+    { id: "chat", icon: <MessageSquare className="w-5 h-5" />, label: "Chat Assistant", onClick: () => setIsChatOpen(true) },
   ];
 
   return (
@@ -107,6 +111,13 @@ export default function Sidebar({
       <Dialog open={isCategorizeOpen} onOpenChange={setIsCategorizeOpen}>
         <DialogContent className="max-w-7xl w-[90vw] h-[90vh] p-0">
           <DocumentCategories />
+        </DialogContent>
+      </Dialog>
+
+      {/* Chat Dialog */}
+      <Dialog open={isChatOpen} onOpenChange={setIsChatOpen}>
+        <DialogContent className="max-w-4xl w-[90vw] h-[90vh] p-0">
+          <ChatWithDocs isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
         </DialogContent>
       </Dialog>
     </>

@@ -112,7 +112,8 @@ export default function SharedDocs() {
 
       if (Array.isArray(response) && response.length > 0 && account) {
         const userDocuments = response[0].filter(
-          doc =>  doc.signers.includes(account.address)
+          doc =>  doc.signers.includes(account.address) && 
+          doc.creator !== account.address 
         );
         setDocuments(userDocuments);
       } else {
