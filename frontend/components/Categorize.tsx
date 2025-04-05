@@ -48,11 +48,11 @@ const STATUS_STYLES: Record<CategoryType, StyleType> = {
     hover: 'hover:border-purple-500/50'
   },
   'legal': {
-    bg: 'bg-emerald-500/10',
-    border: 'border-emerald-500/20',
-    text: 'text-emerald-400',
-    icon: 'text-emerald-400',
-    hover: 'hover:border-emerald-500/50'
+    bg: 'bg-blue-500/10',
+    border: 'border-blue-500/20',
+    text: 'text-blue-400',
+    icon: 'text-blue-400',
+    hover: 'hover:border-blue-500/50'
   },
   'education': {
     bg: 'bg-blue-500/10',
@@ -252,7 +252,7 @@ export default function DocumentCategories() {
     return (
       <div className="min-h-screen bg-[#1A1B1E] flex items-center justify-center">
         <div className="space-y-4 text-center">
-          <div className="w-16 h-16 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin mx-auto" />
+          <div className="w-16 h-16 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin mx-auto" />
           <p className="text-gray-400 animate-pulse">Analyzing documents...</p>
         </div>
       </div>
@@ -263,7 +263,7 @@ export default function DocumentCategories() {
     <div className="min-h-screen bg-[#1A1B1E] text-gray-100 p-8">
       <Toaster />
       <h1 className="text-2xl font-bold mb-8 flex items-center space-x-3">
-        <FolderOpen className="w-8 h-8 text-emerald-400" />
+        <FolderOpen className="w-8 h-8 text-blue-400" />
         <span>Document Categories</span>
       </h1>
 
@@ -321,7 +321,7 @@ export default function DocumentCategories() {
                             {doc.signatures.length} of {doc.signers.length} signatures
                           </p>
                           <div className={`text-xs ${styles.text} flex items-center space-x-1`}>
-                            <span className={`w-2 h-2 rounded-full ${doc.is_completed ? 'bg-emerald-500' : 'bg-yellow-500'}`} />
+                            <span className={`w-2 h-2 rounded-full ${doc.is_completed ? 'bg-blue-500' : 'bg-yellow-500'}`} />
                             <span>{doc.is_completed ? 'Completed' : 'Pending'}</span>
                           </div>
                         </div>

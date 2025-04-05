@@ -965,7 +965,7 @@ export default function DocumentChat() {
     return (
       <div className="min-h-screen bg-[#1A1B1E] flex items-center justify-center">
         <div className="space-y-4 text-center">
-          <div className="w-16 h-16 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin mx-auto" />
+          <div className="w-16 h-16 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin mx-auto" />
           <p className="text-gray-400 animate-pulse">Loading and analyzing documents...</p>
         </div>
       </div>
@@ -979,7 +979,7 @@ export default function DocumentChat() {
       <div className="border-b border-gray-800 p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <MessageSquare className="w-6 h-6 text-emerald-400" />
+            <MessageSquare className="w-6 h-6 text-blue-400" />
             <h1 className="text-2xl font-bold">Document Assistant</h1>
           </div>
           <div className="flex items-center space-x-4">
@@ -987,7 +987,7 @@ export default function DocumentChat() {
               {documents.length} documents analyzed
             </div>
             {processedDocs.length > 0 && (
-              <div className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs">
+              <div className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs">
                 Ready to assist
               </div>
             )}
@@ -999,7 +999,7 @@ export default function DocumentChat() {
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {chatMessages.length === 0 ? (
           <div className="text-center text-gray-400 mt-12 space-y-4">
-            <Bot className="w-16 h-16 mx-auto text-emerald-400/50" />
+            <Bot className="w-16 h-16 mx-auto text-blue-400/50" />
             <div className="space-y-2">
               <p className="font-medium">Ready to assist with your documents</p>
               <p className="text-sm">Ask me about document contents, signers, or status!</p>
@@ -1013,14 +1013,14 @@ export default function DocumentChat() {
             >
               <div className={`max-w-[80%] rounded-lg p-4 flex space-x-3
                 ${msg.role === 'user' 
-                  ? 'bg-emerald-500/10 border border-emerald-500/20' 
+                  ? 'bg-blue-500/10 border border-blue-500/20'
                   : 'bg-gray-800/50 border border-gray-700'
                 }`}
               >
                 {msg.role === 'ai' ? (
-                  <Bot className="w-5 h-5 text-emerald-400 mt-1 flex-shrink-0" />
+                  <Bot className="w-5 h-5 text-blue-400 mt-1 flex-shrink-0" />
                 ) : (
-                  <User className="w-5 h-5 text-emerald-400 mt-1 flex-shrink-0" />
+                  <User className="w-5 h-5 text-blue-400 mt-1 flex-shrink-0" />
                 )}
                 <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
               </div>
@@ -1044,12 +1044,12 @@ export default function DocumentChat() {
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
             placeholder="Ask about document contents, signers, or status..."
-            className="flex-1 px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-emerald-500 outline-none transition-colors"
+            className="flex-1 px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 outline-none transition-colors"
           />
           <button
             type="submit"
             disabled={isSending || !userInput.trim()}
-            className="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center space-x-2"
+            className="px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center space-x-2"
           >
             {isSending ? (
               <Loader className="w-4 h-4 animate-spin" />

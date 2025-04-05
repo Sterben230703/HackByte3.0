@@ -1,28 +1,30 @@
- import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import { AccountInfo } from "./AcoountInfo";
+import { NetworkInfo } from "./NetworkInfo";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { aptosClient } from "@/utils/aptosClient";
 import { InputTransactionData } from "@aptos-labs/wallet-adapter-react";
-import axios from 'axios';
-import { toast, Toaster } from 'react-hot-toast';
-import {WalletName}  from '@aptos-labs/wallet-adapter-react';
-import { 
-  Clock, 
-  Grid,  
-  Share2, 
-  Trash2, 
-  Upload, 
+import axios from "axios";
+import { toast, Toaster } from "react-hot-toast";
+import { WalletName } from "@aptos-labs/wallet-adapter-react";
+import {
+  Clock,
+  Grid,
+  Share2,
+  Trash2,
+  Upload,
   MoreVertical,
-  FileText, 
-  X, 
+  FileText,
+  X,
   Menu,
   Eye,
   Bot,
-  ExternalLink, 
-} from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { Button } from './ui/button';
-import {IoDocumentLockOutline} from 'react-icons/io5'
- 
+  ExternalLink,
+} from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "./ui/button";
+import { IoDocumentLockOutline } from "react-icons/io5";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 interface Signature {
   signer: string;
@@ -45,26 +47,27 @@ interface Signer {
 
 const STATUS_STYLES = {
   completed: {
-    bg: 'bg-emerald-500/10',
-    border: 'border-emerald-500/20',
-    text: 'text-emerald-400',
-    icon: 'text-emerald-400',
-    hover: 'hover:border-emerald-500/50'
+    bg: "bg-blue-500/10",
+    border: "border-blue-500/30",
+    text: "text-blue-600",
+    icon: "text-blue-600",
+    hover: "hover:border-blue-500",
   },
   pending: {
-    bg: 'bg-yellow-500/10',
-    border: 'border-yellow-500/20',
-    text: 'text-yellow-400',
-    icon: 'text-yellow-400',
-    hover: 'hover:border-yellow-500/50'
-  }
+    bg: "bg-amber-500/10",
+    border: "border-amber-500/30",
+    text: "text-amber-600",
+    icon: "text-amber-600",
+    hover: "hover:border-amber-500",
+  },
 };
 
-const ACTIVE_TAB_STYLES = "bg-gradient-to-r from-emerald-500/20 to-emerald-500/10 border-l-2 border-emerald-500 text-white";
+const ACTIVE_TAB_STYLES = "bg-gradient-to-r from-blue-500/20 to-blue-500/10 border-l-2 border-blue-500 text-blue-700";
 
 export default function ContractManagement() {
-  const { account, signAndSubmitTransaction, connect, disconnect } = useWallet(); 
-  const [activeTab, setActiveTab] = useState('recent');
+  const { account, signAndSubmitTransaction, connect, disconnect } = useWallet();
+  const [showAccountInfo, setShowAccountInfo] = useState(false);
+  const [activeTab, setActiveTab] = useState("recent");
   const [isGridView, setIsGridView] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [documents, setDocuments] = useState<Document[]>([]);
@@ -76,12 +79,12 @@ export default function ContractManagement() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(window.innerWidth < 768);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [viewUrl, setViewUrl] = useState<string | null>(null);
-  const [signersList, setSignersList] = useState<Signer[]>([{ address: '' }]);
+  const [signersList, setSignersList] = useState<Signer[]>([{ address: "" }]);
 
   const moduleAddress = process.env.VITE_APP_MODULE_ADDRESS;
   const moduleName = process.env.VITE_APP_MODULE_NAME;
 
-  console.log(pendingDocuments)
+  console.log(pendingDocuments);
 
   useEffect(() => {
     const handleResize = () => {
@@ -90,8 +93,8 @@ export default function ContractManagement() {
       setIsSidebarCollapsed(mobile);
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
@@ -109,15 +112,14 @@ export default function ContractManagement() {
           function: `${moduleAddress}::${moduleName}::get_all_documents`,
           typeArguments: [],
           functionArguments: [],
-        }
+        },
       });
-
 
       if (Array.isArray(response) && response.length > 0 && account) {
         const userDocuments = response[0].filter(
-          doc => doc.creator === account.address || doc.signers.includes(account.address)
+          (doc) => doc.creator === account.address || doc.signers.includes(account.address),
         );
-        console.log(userDocuments)
+        console.log(userDocuments);
         setDocuments(userDocuments);
       } else {
         setDocuments([]);
@@ -136,14 +138,15 @@ export default function ContractManagement() {
           function: `${moduleAddress}::${moduleName}::get_all_documents`,
           typeArguments: [],
           functionArguments: [],
-        }
+        },
       });
 
       if (Array.isArray(response) && response.length > 0 && account) {
-        const pendingDocs = response[0].filter(doc => 
-          doc.signers.includes(account.address) && 
-          !doc.signatures.some(sig => sig.signer === account.address) &&
-          !doc.is_completed
+        const pendingDocs = response[0].filter(
+          (doc) =>
+            doc.signers.includes(account.address) &&
+            !doc.signatures.some((sig) => sig.signer === account.address) &&
+            !doc.is_completed,
         );
         setPendingDocuments(pendingDocs);
       } else {
@@ -157,7 +160,7 @@ export default function ContractManagement() {
   const fetchDocumentContent = async (cid: string) => {
     try {
       const url = `https://gateway.pinata.cloud/ipfs/${cid}`;
-      const response = await axios.get(url, { responseType: 'blob' });
+      const response = await axios.get(url, { responseType: "blob" });
       return response.data;
     } catch (error) {
       console.error("Error fetching document content:", error);
@@ -181,19 +184,19 @@ export default function ContractManagement() {
   const uploadToPinata = async (file: File) => {
     const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
     let formData = new FormData();
-    formData.append('file', file);
-    
+    formData.append("file", file);
+
     const metadata = JSON.stringify({
-      name: 'Document File',
+      name: "Document File",
     });
-    formData.append('pinataMetadata', metadata);
-    
+    formData.append("pinataMetadata", metadata);
+
     try {
       const res = await axios.post(url, formData, {
         headers: {
-          'pinata_api_key': process.env.VITE_APP_PINATA_API_KEY,
-          'pinata_secret_api_key': process.env.VITE_APP_PINATA_SECRET_API_KEY,
-          "Content-Type": "multipart/form-data"
+          pinata_api_key: process.env.VITE_APP_PINATA_API_KEY,
+          pinata_secret_api_key: process.env.VITE_APP_PINATA_SECRET_API_KEY,
+          "Content-Type": "multipart/form-data",
         },
       });
       return res.data.IpfsHash;
@@ -204,30 +207,30 @@ export default function ContractManagement() {
   };
 
   const handleCreateDocument = async () => {
-    if (!account || !file || signersList.every(s => !s.address.trim())) return;
+    if (!account || !file || signersList.every((s) => !s.address.trim())) return;
     setLoading(true);
     try {
       const cid = await uploadToPinata(file);
       const signerAddresses = signersList
-        .filter(signer => signer.address.trim() !== '')
-        .map(signer => signer.address.trim());
+        .filter((signer) => signer.address.trim() !== "")
+        .map((signer) => signer.address.trim());
 
       const payload: InputTransactionData = {
         data: {
           function: `${moduleAddress}::${moduleName}::create_document`,
           functionArguments: [cid, signerAddresses],
-        }
+        },
       };
       await signAndSubmitTransaction(payload);
       setIsModalOpen(false);
       setFile(null);
-      setSignersList([{ address: '' }]);
+      setSignersList([{ address: "" }]);
       fetchUserDocuments();
       toast.custom((_t) => (
-        <div className="bg-gray-800 text-white px-6 py-4 shadow-xl rounded-lg border border-gray-700 animate-in slide-in-from-bottom-5">
+        <div className="bg-white text-gray-800 px-6 py-4 shadow-lg rounded-lg border border-gray-200 animate-in slide-in-from-bottom-5">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center">
-              <FileText className="w-4 h-4 text-emerald-400" />
+            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+              <FileText className="w-4 h-4 text-blue-600" />
             </div>
             <p>Document uploaded successfully</p>
           </div>
@@ -244,29 +247,29 @@ export default function ContractManagement() {
   const handleShare = (docId: number) => {
     const signingLink = `${window.location.origin}/sign/${docId}`;
     navigator.clipboard.writeText(signingLink);
-    toast.custom((t) => (
-      <div className={`${
-        t.visible ? 'animate-enter' : 'animate-leave'
-      } max-w-md w-full bg-gray-800 shadow-lg rounded-lg pointer-events-auto flex items-center justify-between p-4 gap-3 border border-gray-700`}>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-emerald-500/20">
-            <Share2 className="w-5 h-5 text-emerald-400" />
-          </div>
-          <p className="text-sm font-medium text-gray-100">
-            Signing link copied to clipboard
-          </p>
-        </div>
-        <button
-          onClick={() => toast.dismiss(t.id)}
-          className="p-2 rounded-lg hover:bg-gray-700"
+    toast.custom(
+      (t) => (
+        <div
+          className={`${
+            t.visible ? "animate-enter" : "animate-leave"
+          } max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex items-center justify-between p-4 gap-3 border border-gray-200`}
         >
-          <X className="w-4 h-4" />
-        </button>
-      </div>
-    ), {
-      duration: 2000,
-      position: 'bottom-right',
-    });
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100">
+              <Share2 className="w-5 h-5 text-blue-600" />
+            </div>
+            <p className="text-sm font-medium text-gray-800">Signing link copied to clipboard</p>
+          </div>
+          <button onClick={() => toast.dismiss(t.id)} className="p-2 rounded-lg hover:bg-gray-100">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      ),
+      {
+        duration: 2000,
+        position: "bottom-right",
+      },
+    );
   };
 
   const handleDrag = (e: React.DragEvent) => {
@@ -283,29 +286,29 @@ export default function ContractManagement() {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       setFile(e.dataTransfer.files[0]);
       setIsModalOpen(true);
     }
   };
 
-  const openIPFSFile = async(cid: string) => {
+  const openIPFSFile = async (cid: string) => {
     const ipfsUrl = `https://ipfs.io/ipfs/${cid}`;
-    const response = await axios.get(ipfsUrl, { responseType: 'blob' });
-    window.open(URL.createObjectURL(response.data), '_blank');
+    const response = await axios.get(ipfsUrl, { responseType: "blob" });
+    window.open(URL.createObjectURL(response.data), "_blank");
   };
 
   const DocumentCard = ({ doc }: { doc: Document }) => {
-    const status = doc.is_completed ? 'completed' : 'pending';
+    const status = doc.is_completed ? "completed" : "pending";
     const styles = STATUS_STYLES[status];
-    
+
     return (
-      <div 
-        className={`group relative bg-gray-800/50 backdrop-blur-sm rounded-xl border ${styles.border} ${styles.hover} transition-all duration-200`}
+      <div
+        className={`group relative bg-white rounded-xl border ${styles.border} ${styles.hover} transition-all duration-200 shadow-sm hover:shadow-md`}
       >
         <div className={`absolute top-0 left-4 right-0 h-2 ${styles.bg} rounded-b-lg`}></div>
-        
+
         <Link to={`/sign/${doc.id}`}>
           <div className="p-4 md:p-6">
             <div className="flex items-start justify-between mb-4">
@@ -313,35 +316,37 @@ export default function ContractManagement() {
                 <FileText className={`w-5 h-5 ${styles.icon}`} />
               </div>
               <div className="flex space-x-2">
-                <button 
+                <button
                   onClick={(e) => {
                     e.preventDefault();
                     handleViewDocument(doc);
                   }}
-                  className="p-2 rounded-lg hover:bg-gray-700 transition-colors"
+                  className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
                 >
-                  <Eye className="w-4 h-4" />
+                  <Eye className="w-4 h-4 text-gray-600" />
                 </button>
-                <button 
+                <button
                   onClick={(e) => {
                     e.preventDefault();
                     handleShare(doc.id);
                   }}
-                  className="p-2 rounded-lg hover:bg-gray-700 transition-colors"
+                  className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
                 >
-                  <Share2 className="w-4 h-4" />
+                  <Share2 className="w-4 h-4 text-gray-600" />
                 </button>
               </div>
             </div>
 
             <div className="space-y-2">
-              <h4 className="font-medium">Document {doc.id}</h4>
-              <p className="text-sm text-gray-400">
+              <h4 className="font-medium text-gray-800">Document {doc.id}</h4>
+              <p className="text-sm text-gray-500">
                 {doc.signatures.length} of {doc.signers.length} signatures
               </p>
               <div className={`text-xs ${styles.text} flex items-center space-x-1`}>
-                <span className={`w-2 h-2 rounded-full ${status === 'completed' ? 'bg-emerald-500' : 'bg-yellow-500'}`}></span>
-                <span>{status === 'completed' ? 'Completed' : 'Pending'}</span>
+                <span
+                  className={`w-2 h-2 rounded-full ${status === "completed" ? "bg-blue-500" : "bg-amber-500"}`}
+                ></span>
+                <span>{status === "completed" ? "Completed" : "Pending"}</span>
               </div>
             </div>
           </div>
@@ -349,29 +354,33 @@ export default function ContractManagement() {
       </div>
     );
   };
+
   return (
-    <div className="min-h-screen bg-[#1A1B1E] text-gray-100">
+    <div className="min-h-screen bg-gray-50 text-gray-800">
       <Toaster />
       {/* Main Layout */}
       <div className="flex h-screen overflow-hidden">
         {/* Sidebar */}
-        <div 
-          className={`${
-            isMobile ? 'fixed' : 'relative'
-          } z-20 transition-all duration-300 flex flex-col ${
-            isSidebarCollapsed ? 'w-16' : 'w-64'
-          } h-full border-r border-gray-800 bg-[#1A1B1E]`}
+        <div
+          className={`${isMobile ? "fixed" : "relative"} z-20 transition-all duration-300 flex flex-col ${
+            isSidebarCollapsed ? "w-16" : "w-64"
+          } h-full border-r border-gray-200 bg-white shadow-sm`}
         >
           {/* Navigation */}
           <div className="px-4 py-6">
             <div className="flex items-center justify-between">
-              {!isSidebarCollapsed && <h2 className="text-2xl font-bold flex items-center"><IoDocumentLockOutline className='h-7 w-7 mx-2' />Sault</h2>}
+              {!isSidebarCollapsed && (
+                <h2 className="text-2xl font-bold flex items-center text-gray-800">
+                  <IoDocumentLockOutline className="h-7 w-7 mx-2 text-blue-600" />
+                  SAULT
+                </h2>
+              )}
               {isMobile && (
                 <button
                   onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-                  className="p-2 rounded-lg hover:bg-gray-800"
+                  className="p-2 rounded-lg hover:bg-gray-100"
                 >
-                  <Menu className="w-5 h-5" />
+                  <Menu className="w-5 h-5 text-gray-600" />
                 </button>
               )}
             </div>
@@ -379,23 +388,19 @@ export default function ContractManagement() {
 
           <nav className="flex-1 px-4 space-y-1">
             {[
-              { id: 'Home', icon: <Clock className="w-4 h-4" />, label: 'Home' },
-              { id: 'Categorized', icon: <Grid className="w-4 h-4" />, label: 'Categorized', path: '/categorize' },
-              { id: 'Shared', icon: <Share2 className="w-4 h-4" />, label: 'Shared',path: '/shared-docs' },
-              { id: 'Trash', icon: <Trash2 className="w-4 h-4" />, label: 'Trash' },
-              { id: 'bot', icon: <Bot className="w-4 h-4" />, label: 'Talk-2-Docs', path: '/chatwithdocs' }
+              { id: "Home", icon: <Clock className="w-4 h-4" />, label: "Home" },
+              { id: "Categorized", icon: <Grid className="w-4 h-4" />, label: "Categorized", path: "/categorize" },
+              { id: "Shared", icon: <Share2 className="w-4 h-4" />, label: "Shared", path: "/shared-docs" },
+              { id: "Trash", icon: <Trash2 className="w-4 h-4" />, label: "Trash" },
+              { id: "bot", icon: <Bot className="w-4 h-4" />, label: "Talk-2-Docs", path: "/chatwithdocs" },
             ].map((item) => (
-              <Link key={item.id} to={item.path || '#'}>
+              <Link key={item.id} to={item.path || "#"}>
                 <button
                   onClick={() => setActiveTab(item.id)}
                   className={`w-full rounded-lg transition-all duration-200 flex items-center ${
-                    isSidebarCollapsed 
-                      ? 'justify-center p-3' 
-                      : 'px-4 py-2 space-x-3'
+                    isSidebarCollapsed ? "justify-center p-3" : "px-4 py-2 space-x-3"
                   } ${
-                    activeTab === item.id 
-                      ? ACTIVE_TAB_STYLES
-                      : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                    activeTab === item.id ? ACTIVE_TAB_STYLES : "text-gray-600 hover:text-blue-600 hover:bg-gray-100"
                   }`}
                 >
                   {item.icon}
@@ -406,11 +411,11 @@ export default function ContractManagement() {
           </nav>
 
           {/* Bottom Actions */}
-          <div className="mt-auto p-4 border-t border-gray-800 space-y-2">
-            <button 
+          <div className="mt-auto p-4 border-t border-gray-200 space-y-2">
+            <button
               onClick={() => setIsModalOpen(true)}
-              className={`w-full bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors flex items-center justify-center space-x-2 ${
-                isSidebarCollapsed ? 'p-3' : 'px-4 py-3'
+              className={`w-full bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 ${
+                isSidebarCollapsed ? "p-3" : "px-4 py-3"
               }`}
             >
               <Upload className="w-4 h-4" />
@@ -422,35 +427,35 @@ export default function ContractManagement() {
         {/* Main Content */}
         <div className="flex-1 ml-20 md:ml-0 overflow-y-auto">
           {/* Header */}
-          <div className="sticky top-0 z-10 bg-[#1A1B1E] border-b border-gray-800">
+          <div className="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
             <div className="px-4 md:px-6 py-4 flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
-                  <span className="text-xs md:text-sm">Completed</span>
+                  <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                  <span className="text-xs md:text-sm text-gray-600">Completed</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                  <span className="text-xs md:text-sm">Pending</span>
+                  <div className="w-3 h-3 rounded-full bg-amber-500"></div>
+                  <span className="text-xs md:text-sm text-gray-600">Pending</span>
                 </div>
               </div>
               {!account ? (
-                <button 
+                <button
                   onClick={() => connect("Petra" as WalletName<"Petra">)}
-                  className="px-4 md:px-6 py-2 text-sm md:text-base rounded-lg bg-emerald-500 hover:bg-emerald-600 transition-colors"
+                  className="px-4 md:px-6 py-2 text-sm md:text-base rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors text-white"
                 >
                   Connect
                 </button>
               ) : (
                 <div className="flex items-center space-x-3">
-                  <Button className="hidden md:inline text-sm text-white bg-emerald-500 hover:bg-emerald-600">
+                  <Button
+                    className="hidden md:inline text-sm text-white bg-blue-600 hover:bg-blue-700"
+                    onClick={() => setShowAccountInfo(true)}
+                  >
                     {`${account.address.slice(0, 6)}...${account.address.slice(-4)}`}
                   </Button>
-                  <button
-                    onClick={() => disconnect()}
-                    className="p-2 rounded-lg hover:bg-gray-800"
-                  >
-                    <X className="w-4 h-4" />
+                  <button onClick={() => disconnect()} className="p-2 rounded-lg hover:bg-gray-100">
+                    <X className="w-4 h-4 text-gray-600" />
                   </button>
                 </div>
               )}
@@ -459,127 +464,190 @@ export default function ContractManagement() {
 
           {/* Content Area */}
           <div className="p-4 md:p-6 space-y-6">
-            {/* Upload Area */}
-            <div 
-              className={`border-2 border-dashed rounded-xl p-6 md:p-12 text-center transition-colors
-                ${dragActive ? 'border-emerald-500 bg-emerald-500/10' : 'border-gray-700 hover:border-gray-600'}`}
-              onDragEnter={handleDrag}
-              onDragLeave={handleDrag}
-              onDragOver={handleDrag}
-              onDrop={handleDrop}
-            >
-              <p className="text-gray-400 mb-2 text-sm md:text-base">Drag and drop your files here</p>
-              <p className="text-gray-500 text-xs md:text-sm mb-4">OR</p>
-              <button 
-                onClick={() => document.getElementById('file-input')?.click()}
-                className="px-4 md:px-6 py-2 border border-gray-600 rounded-lg text-gray-300 hover:bg-gray-800 transition-colors text-sm md:text-base"
-              >
-                Browse
-              </button>
-              <input
-                id="file-input"
-                type="file"
-                className="hidden"
-                onChange={(e) => {
-                  if (e.target.files?.[0]) {
-                    setFile(e.target.files[0]);
-                    setIsModalOpen(true);
-                  }
-                }}
-              />
-            </div>
-            {/* Statistics Section */}
+            {/* Statistics Section - Changed to top row */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               {/* Signed Documents */}
-              <div className="p-6 rounded-xl bg-gray-800/50 backdrop-blur-sm border border-gray-700">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="space-y-1">
-                    <h3 className="text-lg font-medium">Signed Documents</h3>
-                    <p className="text-sm text-gray-400">Successfully completed</p>
+              {/* Document Statistics */}
+              <div className="p-6 rounded-xl bg-white shadow-md border border-gray-200">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="space-y-1 mb-4">
+                    <h3 className="text-lg font-medium text-gray-800">Document Statistics</h3>
+                    <p className="text-sm text-gray-500 ">Summary of all the documents uploaded</p>
                   </div>
-                  <div className="w-12 h-12 rounded-lg bg-emerald-500/20 flex items-center justify-center">
-                    <FileText className="w-6 h-6 text-emerald-400" />
+                  <div className="flex space-x-4">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-3 h-3 bg-blue-500 rounded"></div>
+                      <span className="text-sm text-gray-600">Completed</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-3 h-3 bg-amber-500 rounded"></div>
+                      <span className="text-sm text-gray-600">Pending</span>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-end space-x-4">
-                  <div className="flex-1">
-                    <div className="h-24 flex items-end">
-                      <div 
-                        className="flex-1 bg-emerald-500/20 rounded-t-lg transition-all duration-500" 
-                        style={{ 
-                          height: documents.length ? 
-                            `${(documents.filter(doc => doc.is_completed).length / documents.length) * 100}%` :
-                            '0%',
-                          minHeight: '10%'
-                        }}
-                      />
-                    </div>
-                    <div className="h-1 w-full bg-emerald-500/20 mt-2" />
+                {/* Grid to display two separate graphs */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Completed Documents Graph */}
+                  <div className="h-[200px] w-full">
+                    <div className="mb-2 text-center font-medium text-gray-700">Completed Documents</div>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        data={[
+                          {
+                            name: "Today",
+                            completed: documents.filter((doc) => doc.is_completed).length, 
+                          },
+                        ]}
+                        margin={{ top: 10, right: 10, left: 10, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                        <XAxis dataKey="name" axisLine={false} tickLine={false} />
+                        <YAxis axisLine={false} tickLine={false} />
+                        <Tooltip
+                          cursor={{ fill: "rgba(229, 231, 235, 0.3)" }}
+                          contentStyle={{
+                            backgroundColor: "#FFF",
+                            border: "1px solid #E5E7EB",
+                            borderRadius: "0.5rem",
+                            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                            padding: "8px 12px",
+                          }}
+                          labelStyle={{ fontWeight: 600, marginBottom: 4 }}
+                          formatter={(value) => [`${value} Documents`, undefined]}
+                        />
+                        <Bar
+                          name="Completed"
+                          dataKey="completed"
+                          fill="#3B82F6"
+                          radius={[4, 4, 0, 0]}
+                          maxBarSize={60}
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
                   </div>
-                  <div className="text-2xl font-bold text-emerald-400">
-                    {documents.filter(doc => doc.is_completed).length}
+
+                  {/* Pending Documents Graph */}
+                  <div className="h-[200px] w-full">
+                    <div className="mb-2 text-center font-medium text-gray-700">Pending Documents</div>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        data={[
+                          {
+                          
+                            pending: documents.filter((doc) => !doc.is_completed).length,
+                          },
+                        ]}
+                        margin={{ top: 10, right: 10, left: 10, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                        <XAxis dataKey="name" axisLine={false} tickLine={false} />
+                        <YAxis axisLine={false} tickLine={false} />
+                        <Tooltip
+                          cursor={{ fill: "rgba(229, 231, 235, 0.3)" }}
+                          contentStyle={{
+                            backgroundColor: "#FFF",
+                            border: "1px solid #E5E7EB",
+                            borderRadius: "0.5rem",
+                            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                            padding: "8px 12px",
+                          }}
+                          labelStyle={{ fontWeight: 600, marginBottom: 4 }}
+                          formatter={(value) => [`${value} Documents`, undefined]}
+                        />
+                        <Bar name="Pending" dataKey="pending" fill="#F59E0B" radius={[4, 4, 0, 0]} maxBarSize={60} />
+                      </BarChart>
+                    </ResponsiveContainer>
                   </div>
                 </div>
               </div>
 
-              {/* Pending Documents */}
-              <div className="p-6 rounded-xl bg-gray-800/50 backdrop-blur-sm border border-gray-700">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="space-y-1">
-                    <h3 className="text-lg font-medium">Pending Documents</h3>
-                    <p className="text-sm text-gray-400">Awaiting signatures</p>
-                  </div>
-                  <div className="w-12 h-12 rounded-lg bg-yellow-500/20 flex items-center justify-center">
-                    <Clock className="w-6 h-6 text-yellow-400" />
-                  </div>
-                </div>
-                <div className="flex items-end space-x-4">
-                  <div className="flex-1">
-                    <div className="h-24 flex items-end">
-                      <div 
-                        className="flex-1 bg-yellow-500/20 rounded-t-lg transition-all duration-500" 
-                        style={{ 
-                          height: documents.length ? 
-                            `${(documents.filter(doc => !doc.is_completed).length / documents.length) * 100}%` :
-                            '0%',
-                          minHeight: '10%'
-                        }}
-                      />
+              {/* Documents Summary */}
+              <div className="p-6 rounded-xl bg-white shadow-md border border-gray-200">
+                <div className="grid grid-cols-1 gap-6">
+                  <div>
+                    <div className="flex items-center space-x-4 mb-4">
+                      <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
+                        <FileText className="w-6 h-6 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="text-2xl font-bold text-blue-600">
+                          {documents.filter((doc) => doc.is_completed).length}
+                        </p>
+                        <p className="text-sm text-gray-500">Total Completed</p>
+                      </div>
                     </div>
-                    <div className="h-1 w-full bg-yellow-500/20 mt-2" />
                   </div>
-                  <div className="text-2xl font-bold text-yellow-400">
-                    {documents.filter(doc => !doc.is_completed).length}
+                  <div>
+                    <div className="flex items-center space-x-4 mb-4">
+                      <div className="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center">
+                        <Clock className="w-6 h-6 text-amber-600" />
+                      </div>
+                      <div>
+                        <p className="text-2xl font-bold text-amber-600">
+                          {documents.filter((doc) => !doc.is_completed).length}
+                        </p>
+                        <p className="text-sm text-gray-500">Total Pending</p>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Upload Area */}
+                  <div
+                    className={`border-2 border-dashed rounded-xl p-6 md:p-6 text-center transition-colors bg-white
+                ${dragActive ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-blue-400"}`}
+                    onDragEnter={handleDrag}
+                    onDragLeave={handleDrag}
+                    onDragOver={handleDrag}
+                    onDrop={handleDrop}
+                  >
+                    <p className="text-gray-600 mb-2 text-sm md:text-base">Drag and drop your files here</p>
+                    <p className="text-gray-500 text-xs md:text-sm mb-4">OR</p>
+                    <button
+                      onClick={() => document.getElementById("file-input")?.click()}
+                      className="px-4 md:px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors text-sm md:text-base"
+                    >
+                      Browse
+                    </button>
+                    <input
+                      id="file-input"
+                      type="file"
+                      className="hidden"
+                      onChange={(e) => {
+                        if (e.target.files?.[0]) {
+                          setFile(e.target.files[0]);
+                          setIsModalOpen(true);
+                        }
+                      }}
+                    />
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Documents Grid */}
-            <div>
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium">Your Documents</h3>
+                <h3 className="text-lg font-medium text-gray-800">Your Documents</h3>
                 <div className="flex space-x-2">
-                  <button 
+                  <button
                     onClick={() => setIsGridView(true)}
-                    className={`p-2 rounded-lg ${isGridView ? 'bg-gray-800' : 'hover:bg-gray-800'}`}
+                    className={`p-2 rounded-lg ${isGridView ? "bg-gray-100 text-blue-600" : "hover:bg-gray-100 text-gray-600"}`}
                   >
                     <Grid className="w-4 h-4" />
                   </button>
-                  <button 
+                  <button
                     onClick={() => setIsGridView(false)}
-                    className={`p-2 rounded-lg ${!isGridView ? 'bg-gray-800' : 'hover:bg-gray-800'}`}
+                    className={`p-2 rounded-lg ${!isGridView ? "bg-gray-100 text-blue-600" : "hover:bg-gray-100 text-gray-600"}`}
                   >
                     <MoreVertical className="w-4 h-4" />
                   </button>
                 </div>
               </div>
 
-              <div className={`grid gap-4 ${
-                isGridView 
-                  ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4' 
-                  : 'grid-cols-1'
-              }`}>
+              <div
+                className={`grid gap-4 ${
+                  isGridView ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4" : "grid-cols-1"
+                }`}
+              >
                 {documents.map((doc) => (
                   <DocumentCard key={doc.id} doc={doc} />
                 ))}
@@ -588,66 +656,65 @@ export default function ContractManagement() {
           </div>
         </div>
       </div>
-{/* Enhanced Upload Modal */}
-{isModalOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+
+      {/* Enhanced Upload Modal */}
+      {isModalOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4"
           onClick={(e) => {
             if (e.target === e.currentTarget) setIsModalOpen(false);
           }}
         >
-          <div 
-            className="bg-gray-900 rounded-xl w-full max-w-md animate-in zoom-in-95 duration-200"
-            onClick={e => e.stopPropagation()}
+          <div
+            className="bg-white rounded-xl w-full max-w-md animate-in zoom-in-95 duration-200 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
           >
-            <div className="border-b border-gray-800">
+            <div className="border-b border-gray-200">
               <div className="flex justify-between items-center p-6">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
-                    <Upload className="w-5 h-5 text-emerald-400" />
+                  <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+                    <Upload className="w-5 h-5 text-blue-600" />
                   </div>
-                  <h3 className="text-xl font-semibold">Upload Document</h3>
+                  <h3 className="text-xl font-semibold text-gray-800">Upload Document</h3>
                 </div>
-                <button 
+                <button
                   onClick={() => setIsModalOpen(false)}
-                  className="p-2 rounded-lg hover:bg-gray-800 transition-colors group"
+                  className="p-2 rounded-lg hover:bg-gray-100 transition-colors group"
                 >
-                  <X className="w-5 h-5 group-hover:rotate-90 transition-transform" />
+                  <X className="w-5 h-5 text-gray-600 group-hover:rotate-90 transition-transform" />
                 </button>
               </div>
             </div>
-            
+
             <div className="p-6 space-y-6">
               {/* File Upload Section */}
-              <div 
+              <div
                 className={`relative border-2 border-dashed rounded-xl p-6 text-center transition-all duration-200 
-                  ${file ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-gray-700 hover:border-gray-600'}`}
+                  ${file ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-blue-400"}`}
               >
                 {file ? (
                   <div className="space-y-2">
-                    <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center mx-auto">
-                      <FileText className="w-6 h-6 text-emerald-400" />
+                    <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center mx-auto">
+                      <FileText className="w-6 h-6 text-blue-600" />
                     </div>
-                    <p className="font-medium truncate">{file.name}</p>
-                    <p className="text-sm text-gray-400">
-                      {(file.size / (1024 * 1024)).toFixed(2)} MB
-                    </p>
-                    <button 
+                    <p className="font-medium truncate text-gray-800">{file.name}</p>
+                    <p className="text-sm text-gray-500">{(file.size / (1024 * 1024)).toFixed(2)} MB</p>
+                    <button
                       onClick={() => setFile(null)}
-                      className="text-sm text-red-400 hover:text-red-300 transition-colors"
+                      className="text-sm text-red-600 hover:text-red-700 transition-colors"
                     >
                       Remove file
                     </button>
                   </div>
                 ) : (
                   <div
-                    onClick={() => document.getElementById('modal-file-input')?.click()}
+                    onClick={() => document.getElementById("modal-file-input")?.click()}
                     className="cursor-pointer space-y-2"
                   >
-                    <div className="w-12 h-12 rounded-xl bg-gray-800 flex items-center justify-center mx-auto">
-                      <Upload className="w-6 h-6 text-gray-400" />
+                    <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center mx-auto">
+                      <Upload className="w-6 h-6 text-gray-500" />
                     </div>
-                    <p className="text-gray-400">Drop your file here or click to browse</p>
+                    <p className="text-gray-600">Drop your file here or click to browse</p>
                     <p className="text-xs text-gray-500">Maximum file size: 25MB</p>
                   </div>
                 )}
@@ -671,7 +738,7 @@ export default function ContractManagement() {
                 <label className="text-sm font-medium text-gray-300">Signers</label>
                 <div className="space-y-2">
                   {signersList.map((signer, index) => (
-                    <div 
+                    <div
                       key={index}
                       className="group flex items-center space-x-2 animate-in slide-in-from-left duration-200"
                       style={{ animationDelay: `${index * 50}ms` }}
@@ -685,7 +752,7 @@ export default function ContractManagement() {
                           setSignersList(newList);
                         }}
                         placeholder="Enter signer address"
-                        className="flex-1 px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-emerald-500 outline-none transition-colors text-sm"
+                        className="flex-1 px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 outline-none transition-colors text-sm"
                       />
                       {signersList.length > 1 && (
                         <button
@@ -702,8 +769,8 @@ export default function ContractManagement() {
                   ))}
                 </div>
                 <button
-                  onClick={() => setSignersList([...signersList, { address: '' }])}
-                  className="w-full px-4 py-2 rounded-lg border border-dashed border-gray-700 hover:border-emerald-500 text-gray-400 hover:text-emerald-400 transition-all text-sm focus:outline-none"
+                  onClick={() => setSignersList([...signersList, { address: "" }])}
+                  className="w-full px-4 py-2 rounded-lg border border-dashed border-gray-700 hover:border-blue-500 text-gray-400 hover:text-blue-400 transition-all text-sm focus:outline-none"
                 >
                   + Add another signer
                 </button>
@@ -721,8 +788,8 @@ export default function ContractManagement() {
                 </button>
                 <button
                   onClick={handleCreateDocument}
-                  disabled={loading || !file || signersList.every(s => !s.address.trim())}
-                  className="flex-1 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={loading || !file || signersList.every((s) => !s.address.trim())}
+                  className="flex-1 px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <div className="flex items-center justify-center space-x-2">
@@ -730,7 +797,7 @@ export default function ContractManagement() {
                       <span>Uploading...</span>
                     </div>
                   ) : (
-                    'Upload Document'
+                    "Upload Document"
                   )}
                 </button>
               </div>
@@ -745,8 +812,12 @@ export default function ContractManagement() {
           <div className="bg-gray-900 rounded-xl w-full h-full flex flex-col">
             <div className="flex items-center justify-between p-4 border-b border-gray-800">
               <div className="flex items-center space-x-3">
-                <div className={`w-8 h-8 rounded-lg ${STATUS_STYLES[viewingDoc.is_completed ? 'completed' : 'pending'].bg} flex items-center justify-center`}>
-                  <FileText className={`w-4 h-4 ${STATUS_STYLES[viewingDoc.is_completed ? 'completed' : 'pending'].icon}`} />
+                <div
+                  className={`w-8 h-8 rounded-lg ${STATUS_STYLES[viewingDoc.is_completed ? "completed" : "pending"].bg} flex items-center justify-center`}
+                >
+                  <FileText
+                    className={`w-4 h-4 ${STATUS_STYLES[viewingDoc.is_completed ? "completed" : "pending"].icon}`}
+                  />
                 </div>
                 <div>
                   <h3 className="font-medium">Document {viewingDoc.id}</h3>
@@ -781,9 +852,7 @@ export default function ContractManagement() {
                   title="Document Preview"
                 />
               ) : (
-                <div className="flex items-center justify-center h-full text-gray-400">
-                  Loading document...
-                </div>
+                <div className="flex items-center justify-center h-full text-gray-400">Loading document...</div>
               )}
             </div>
           </div>
@@ -792,12 +861,32 @@ export default function ContractManagement() {
 
       {/* Mobile Overlay */}
       {isMobile && !isSidebarCollapsed && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-10"
-          onClick={() => setIsSidebarCollapsed(true)}
-        />
+        <div className="fixed inset-0 bg-black/50 z-10" onClick={() => setIsSidebarCollapsed(true)} />
+      )}
+
+      {/* Account Info Modal */}
+      {showAccountInfo && (
+        <div
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          onClick={() => setShowAccountInfo(false)}
+        >
+          <div className="bg-gray-900 rounded-xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-semibold">Account Details</h3>
+              <button
+                onClick={() => setShowAccountInfo(false)}
+                className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-8">
+              <AccountInfo />
+              <NetworkInfo />
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
-};
- 
+}

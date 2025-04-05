@@ -33,10 +33,10 @@ interface Document {
 
 const STATUS_STYLES = {
   completed: {
-    bg: 'bg-emerald-500/10',
-    border: 'border-emerald-500/20',
-    text: 'text-emerald-400',
-    icon: 'text-emerald-400',
+    bg: 'bg-blue-500/10',
+    border: 'border-blue-500/20',
+    text: 'text-blue-400',
+    icon: 'text-blue-400',
   },
   pending: {
     bg: 'bg-yellow-500/10',
@@ -128,8 +128,8 @@ const SigningPage: React.FC = () => {
       toast.custom((_t) => (
         <div className="bg-gray-800 text-white px-6 py-4 shadow-xl rounded-lg border border-gray-700 animate-in slide-in-from-bottom-5">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center">
-              <Check className="w-4 h-4 text-emerald-400" />
+            <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
+              <Check className="w-4 h-4 text-blue-400" />
             </div>
             <p>Document signed successfully!</p>
           </div>
@@ -155,7 +155,7 @@ const SigningPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-[#1A1B1E] flex items-center justify-center">
         <div className="space-y-4 text-center">
-          <div className="w-16 h-16 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin mx-auto" />
+          <div className="w-16 h-16 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin mx-auto" />
           <p className="text-gray-400 animate-pulse">Loading document...</p>
         </div>
       </div>
@@ -218,7 +218,7 @@ const SigningPage: React.FC = () => {
               <span className="text-sm">Status</span>
             </div>
             <div className={`flex items-center space-x-2 ${styles.text}`}>
-              <span className={`w-2 h-2 rounded-full ${status === 'completed' ? 'bg-emerald-500' : 'bg-yellow-500'}`} />
+              <span className={`w-2 h-2 rounded-full ${status === 'completed' ? 'bg-blue-500' : 'bg-yellow-500'}`} />
               <span className="font-medium capitalize">{status}</span>
             </div>
           </div>
@@ -288,7 +288,7 @@ const SigningPage: React.FC = () => {
                   )}
                 </div>
                 {signature ? (
-                  <Check className="w-4 h-4 text-emerald-400" />
+                  <Check className="w-4 h-4 text-blue-400" />
                 ) : (
                   <X className="w-4 h-4 text-red-400" />
                 )}
@@ -301,7 +301,7 @@ const SigningPage: React.FC = () => {
           <button
             onClick={handleSignDocument}
             disabled={signing}
-            className="w-full md:w-auto my-2 px-8 py-3 rounded-lg bg-emerald-500 hover:bg-emerald-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+            className="w-full md:w-auto my-2 px-8 py-3 rounded-lg bg-blue-500 hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
           >
             {signing ? (
               <>
@@ -316,7 +316,7 @@ const SigningPage: React.FC = () => {
             )}
           </button>
         ) : (
-          <div className="bg-gray-800/50 backdrop-blur-sm border border-emerald-400 rounded-lg p-4 text-center my-2">
+          <div className="bg-gray-800/50 backdrop-blur-sm border border-blue-400 rounded-lg p-4 text-center my-2">
             <p className="text-gray-400">
               {document.is_completed
                 ? 'This document has been fully signed by all parties.'

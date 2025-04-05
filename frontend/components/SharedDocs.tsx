@@ -45,11 +45,11 @@ interface Signer {
 
 const STATUS_STYLES = {
   completed: {
-    bg: 'bg-emerald-500/10',
-    border: 'border-emerald-500/20',
-    text: 'text-emerald-400',
-    icon: 'text-emerald-400',
-    hover: 'hover:border-emerald-500/50'
+    bg: 'bg-blue-500/10',
+    border: 'border-blue-500/20',
+    text: 'text-blue-400',
+    icon: 'text-blue-400',
+    hover: 'hover:border-blue-500/50'
   },
   pending: {
     bg: 'bg-yellow-500/10',
@@ -60,7 +60,7 @@ const STATUS_STYLES = {
   }
 };
 
-const ACTIVE_TAB_STYLES = "bg-gradient-to-r from-emerald-500/20 to-emerald-500/10 border-l-2 border-emerald-500 text-white";
+const ACTIVE_TAB_STYLES = "bg-gradient-to-r from-blue-500/20 to-blue-500/10 border-l-2 border-blue-500 text-white";
 
 export default function SharedDocs() {
   const { account, signAndSubmitTransaction, connect, disconnect } = useWallet(); 
@@ -226,8 +226,8 @@ export default function SharedDocs() {
       toast.custom((_t) => (
         <div className="bg-gray-800 text-white px-6 py-4 shadow-xl rounded-lg border border-gray-700 animate-in slide-in-from-bottom-5">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center">
-              <FileText className="w-4 h-4 text-emerald-400" />
+            <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
+              <FileText className="w-4 h-4 text-blue-400" />
             </div>
             <p>Document uploaded successfully</p>
           </div>
@@ -249,8 +249,8 @@ export default function SharedDocs() {
         t.visible ? 'animate-enter' : 'animate-leave'
       } max-w-md w-full bg-gray-800 shadow-lg rounded-lg pointer-events-auto flex items-center justify-between p-4 gap-3 border border-gray-700`}>
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-emerald-500/20">
-            <Share2 className="w-5 h-5 text-emerald-400" />
+          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-500/20">
+            <Share2 className="w-5 h-5 text-blue-400" />
           </div>
           <p className="text-sm font-medium text-gray-100">
             Signing link copied to clipboard
@@ -340,7 +340,7 @@ export default function SharedDocs() {
                 {doc.signatures.length} of {doc.signers.length} signatures
               </p>
               <div className={`text-xs ${styles.text} flex items-center space-x-1`}>
-                <span className={`w-2 h-2 rounded-full ${status === 'completed' ? 'bg-emerald-500' : 'bg-yellow-500'}`}></span>
+                <span className={`w-2 h-2 rounded-full ${status === 'completed' ? 'bg-blue-500' : 'bg-yellow-500'}`}></span>
                 <span>{status === 'completed' ? 'Completed' : 'Pending'}</span>
               </div>
             </div>
@@ -409,7 +409,7 @@ export default function SharedDocs() {
           <div className="mt-auto p-4 border-t border-gray-800 space-y-2">
             <button 
               onClick={() => setIsModalOpen(true)}
-              className={`w-full bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors flex items-center justify-center space-x-2 ${
+              className={`w-full bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center space-x-2 ${
                 isSidebarCollapsed ? 'p-3' : 'px-4 py-3'
               }`}
             >
@@ -426,7 +426,7 @@ export default function SharedDocs() {
             <div className="px-4 md:px-6 py-4 flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-blue-500"></div>
                   <span className="text-xs md:text-sm">Completed</span>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -437,13 +437,13 @@ export default function SharedDocs() {
               {!account ? (
                 <button 
                   onClick={() => connect("Petra" as WalletName<"Petra">)}
-                  className="px-4 md:px-6 py-2 text-sm md:text-base rounded-lg bg-emerald-500 hover:bg-emerald-600 transition-colors"
+                  className="px-4 md:px-6 py-2 text-sm md:text-base rounded-lg bg-blue-500 hover:bg-blue-600 transition-colors"
                 >
                   Connect
                 </button>
               ) : (
                 <div className="flex items-center space-x-3">
-                  <Button className="hidden md:inline text-sm text-white bg-emerald-500 hover:bg-emerald-600">
+                  <Button className="hidden md:inline text-sm text-white bg-blue-500 hover:bg-blue-600">
                     {`${account.address.slice(0, 6)}...${account.address.slice(-4)}`}
                   </Button>
                   <button
@@ -468,15 +468,15 @@ export default function SharedDocs() {
                     <h3 className="text-lg font-medium">Signed Documents</h3>
                     <p className="text-sm text-gray-400">Successfully completed</p>
                   </div>
-                  <div className="w-12 h-12 rounded-lg bg-emerald-500/20 flex items-center justify-center">
-                    <FileText className="w-6 h-6 text-emerald-400" />
+                  <div className="w-12 h-12 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                    <FileText className="w-6 h-6 text-blue-400" />
                   </div>
                 </div>
                 <div className="flex items-end space-x-4">
                   <div className="flex-1">
                     <div className="h-24 flex items-end">
                       <div 
-                        className="flex-1 bg-emerald-500/20 rounded-t-lg transition-all duration-500" 
+                        className="flex-1 bg-blue-500/20 rounded-t-lg transition-all duration-500"
                         style={{ 
                           height: documents.length ? 
                             `${(documents.filter(doc => doc.is_completed).length / documents.length) * 100}%` :
@@ -485,9 +485,9 @@ export default function SharedDocs() {
                         }}
                       />
                     </div>
-                    <div className="h-1 w-full bg-emerald-500/20 mt-2" />
+                    <div className="h-1 w-full bg-blue-500/20 mt-2" />
                   </div>
-                  <div className="text-2xl font-bold text-emerald-400">
+                  <div className="text-2xl font-bold text-blue-400">
                     {documents.filter(doc => doc.is_completed).length}
                   </div>
                 </div>
@@ -574,8 +574,8 @@ export default function SharedDocs() {
                 <div className="border-b border-gray-800">
                 <div className="flex justify-between items-center p-6">
                     <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
-                        <Upload className="w-5 h-5 text-emerald-400" />
+                    <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                        <Upload className="w-5 h-5 text-blue-400" />
                     </div>
                     <h3 className="text-xl font-semibold">Upload Document</h3>
                     </div>
@@ -592,12 +592,12 @@ export default function SharedDocs() {
                 {/* File Upload Section */}
                 <div 
                     className={`relative border-2 border-dashed rounded-xl p-6 text-center transition-all duration-200 
-                    ${file ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-gray-700 hover:border-gray-600'}`}
+                    ${file ? 'border-blue-500/50 bg-blue-500/5' : 'border-gray-700 hover:border-gray-600'}`}
                 >
                     {file ? (
                     <div className="space-y-2">
-                        <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center mx-auto">
-                        <FileText className="w-6 h-6 text-emerald-400" />
+                        <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center mx-auto">
+                        <FileText className="w-6 h-6 text-blue-400" />
                         </div>
                         <p className="font-medium truncate">{file.name}</p>
                         <p className="text-sm text-gray-400">
@@ -656,7 +656,7 @@ export default function SharedDocs() {
                             setSignersList(newList);
                             }}
                             placeholder="Enter signer address"
-                            className="flex-1 px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-emerald-500 outline-none transition-colors text-sm"
+                            className="flex-1 px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 outline-none transition-colors text-sm"
                         />
                         {signersList.length > 1 && (
                             <button
@@ -674,7 +674,7 @@ export default function SharedDocs() {
                     </div>
                     <button
                     onClick={() => setSignersList([...signersList, { address: '' }])}
-                    className="w-full px-4 py-2 rounded-lg border border-dashed border-gray-700 hover:border-emerald-500 text-gray-400 hover:text-emerald-400 transition-all text-sm focus:outline-none"
+                    className="w-full px-4 py-2 rounded-lg border border-dashed border-gray-700 hover:border-blue-500 text-gray-400 hover:text-blue-400 transition-all text-sm focus:outline-none"
                     >
                     + Add another signer
                     </button>
@@ -693,7 +693,7 @@ export default function SharedDocs() {
                 <button
                   onClick={handleCreateDocument}
                   disabled={loading || !file || signersList.every(s => !s.address.trim())}
-                  className="flex-1 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <div className="flex items-center justify-center space-x-2">
