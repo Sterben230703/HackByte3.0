@@ -1,15 +1,18 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { FileText, PieChart, Image, Menu, X, Sun, Moon } from 'lucide-react';
+import { FileText, PieChart, Image, Menu, X, Sun, Moon, MessageSquare } from 'lucide-react';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import Sidebar from './components/Sidebar';
-import Dashboard from './components/Dashboard';
+import Sidebar, { SidebarItem } from './components/Sidebar';
+import { Dashboard } from './components/Dashboard';
 import Documents from './components/Documents';
-import Expenses from './components/Expenses';
-import Images from './components/Images';
+import { Expenses } from './components/Expenses';
+import { Images } from './components/Images';
 import Login from './components/Login';
 import Register from './components/Register';
+import Chatbot from './components/Chatbot';
+import Visualization from './components/Visualization';
+import DataExtractorOCR from './components/DataExtractorOCR';
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
@@ -32,6 +35,9 @@ function AppContent() {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
   const { user, logout } = useAuth();
 
+  // For demo purposes, using a hardcoded user ID
+  const userId = "demo-user-123";
+
   if (!user) {
     return (
       <Routes>
@@ -41,6 +47,16 @@ function AppContent() {
       </Routes>
     );
   }
+
+  const sidebarItems: SidebarItem[] = [
+    { path: '/', icon: <PieChart size={24} />, label: 'Dashboard' },
+    { path: '/documents', icon: <FileText size={24} />, label: 'Documents' },
+    { path: '/expenses', icon: <PieChart size={24} />, label: 'Expenses' },
+    { path: '/images', icon: <Image size={24} />, label: 'Images' },
+    { path: '/chatbot', icon: <MessageSquare size={24} />, label: 'AI Assistant' },
+    { path: '/visualization', icon: <PieChart size={24} />, label: 'Analytics' },
+    { path: '/extract', icon: <FileText size={24} />, label: 'Extract Data' },
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex">
@@ -58,22 +74,25 @@ function AppContent() {
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:translate-x-0 transition duration-200 ease-in-out z-30
       `}>
-        <Sidebar onLogout={logout} />
+        <Sidebar items={sidebarItems} onLogout={logout} />
       </div>
 
       <div className="flex-1 overflow-auto">
         <Routes>
-          <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-          <Route path="/documents" element={<PrivateRoute><Documents /></PrivateRoute>} />
-          <Route path="/expenses" element={<PrivateRoute><Expenses /></PrivateRoute>} />
-          <Route path="/images" element={<PrivateRoute><Images /></PrivateRoute>} />
+          <Route path="/" element={<PrivateRoute><Dashboard userId={userId} /></PrivateRoute>} />
+          <Route path="/documents" element={<PrivateRoute><Documents userId={userId} /></PrivateRoute>} />
+          <Route path="/expenses" element={<PrivateRoute><Expenses userId={userId} /></PrivateRoute>} />
+          <Route path="/images" element={<PrivateRoute><Images userId={userId} /></PrivateRoute>} />
+          <Route path="/chatbot" element={<PrivateRoute><Chatbot userId={userId} /></PrivateRoute>} />
+          <Route path="/visualization" element={<PrivateRoute><Visualization userId={userId} /></PrivateRoute>} />
+          <Route path="/extract" element={<PrivateRoute><DataExtractorOCR userId={userId} /></PrivateRoute>} />
         </Routes>
       </div>
     </div>
   );
 }
 
-function App() {
+export default function App() {
   return (
     <Router>
       <AuthProvider>
@@ -85,4 +104,4 @@ function App() {
   );
 }
 
-export default App;
+export { AppContent, PrivateRoute, ThemeToggle };

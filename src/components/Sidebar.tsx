@@ -2,18 +2,18 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { FileText, PieChart, Image, Home, LogOut } from 'lucide-react';
 
-interface SidebarProps {
-  onLogout: () => void;
+export interface SidebarItem {
+  path: string;
+  icon: React.ReactNode;
+  label: string;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
-  const navItems = [
-    { icon: Home, label: 'Dashboard', path: '/' },
-    { icon: FileText, label: 'Documents', path: '/documents' },
-    { icon: PieChart, label: 'Expenses', path: '/expenses' },
-    { icon: Image, label: 'Images', path: '/images' },
-  ];
+export interface SidebarProps {
+  onLogout: () => void;
+  items: SidebarItem[];
+}
 
+const Sidebar: React.FC<SidebarProps> = ({ onLogout, items }) => {
   return (
     <div className="h-full w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-4">
       <div className="flex items-center gap-2 mb-8 px-2">
@@ -22,7 +22,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
       </div>
       
       <nav className="space-y-1">
-        {navItems.map((item) => (
+        {items.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
@@ -35,7 +35,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
               }
             `}
           >
-            <item.icon className="h-5 w-5" />
+            {item.icon}
             <span className="font-medium">{item.label}</span>
           </NavLink>
         ))}

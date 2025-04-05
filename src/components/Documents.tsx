@@ -1,7 +1,11 @@
 import React from 'react';
 import { FileText, Search, Upload } from 'lucide-react';
 
-const Documents = () => {
+interface DocumentsProps {
+  userId: string;
+}
+
+const Documents = ({ userId }: DocumentsProps) => {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-8">
@@ -44,6 +48,7 @@ const Documents = () => {
           ))}
         </div>
       </div>
+      <p>User ID: {userId}</p>
     </div>
   );
 };

@@ -1,49 +1,146 @@
-import React from 'react';
-import { Image as ImageIcon, Upload } from 'lucide-react';
+import * as React from 'react';
+import { useState, useEffect } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { getUserImages, saveImage } from '../services/api';
+import type { Image } from '../services/api';
+import { Upload } from 'lucide-react';
 
-const Images = () => {
+interface ImagesProps {
+  userId: string;
+}
+
+interface ImageData extends Image {
+  filename: string;
+}
+
+export function Images({ userId }: ImagesProps) {
+  const [images, setImages] = useState<ImageData[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const loadImages = async () => {
+    try {
+      const userImages = await getUserImages(userId);
+      // Map the images to include filename from the url
+      const imagesWithFilename = userImages.map(img => ({
+        ...img,
+        filename: img.url.split('/').pop() || 'unknown'
+      }));
+      setImages(imagesWithFilename);
+      setError(null);
+    } catch (err) {
+      setError('Failed to load images');
+      console.error('Error loading images:', err);
+    }
+  };
+
+  useEffect(() => {
+    loadImages();
+  }, [userId]);
+
+  const onDrop = async (acceptedFiles: File[]) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      for (const file of acceptedFiles) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        // Upload image file
+        const uploadResponse = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!uploadResponse.ok) {
+          throw new Error('Failed to upload image');
+        }
+
+        const { url } = await uploadResponse.json();
+
+        // Save image metadata
+        await saveImage({
+          userId,
+          url,
+          uploadDate: new Date(),
+          filename: file.name,
+        } as ImageData);
+      }
+
+      // Reload images after upload
+      await loadImages();
+    } catch (err) {
+      setError('Failed to upload image');
+      console.error('Error uploading image:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      'image/*': ['.jpeg', '.png', '.jpg', '.gif'],
+    },
+  });
+
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Images</h1>
-          <p className="text-gray-600">AI-powered image classification and organization</p>
-        </div>
-        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-          <Upload className="h-5 w-5" />
-          Upload Images
-        </button>
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-900">Images</h1>
+        <p className="text-gray-600">Upload and manage your images</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
-          <div key={item} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="aspect-square relative">
+      <div
+        {...getRootProps()}
+        className={`border-2 border-dashed rounded-lg p-8 text-center mb-8 ${
+          isDragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
+        }`}
+      >
+        <input {...getInputProps()} />
+        <Upload className="mx-auto h-12 w-12 text-gray-400" />
+        <p className="mt-2 text-sm text-gray-600">
+          {isDragActive
+            ? 'Drop the files here...'
+            : 'Drag and drop images here, or click to select files'}
+        </p>
+      </div>
+
+      {error && (
+        <div className="bg-red-50 text-red-700 p-4 rounded-lg mb-8">
+          {error}
+        </div>
+      )}
+
+      {isLoading && (
+        <div className="text-center text-gray-600 mb-8">
+          Uploading images...
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {images.map((image) => (
+          <div
+            key={image._id}
+            className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+          >
+            <div className="aspect-w-16 aspect-h-9">
               <img
-                src={`https://source.unsplash.com/random/400x400?sig=${item}`}
-                alt={`Gallery item ${item}`}
+                src={image.url}
+                alt={image.filename}
                 className="object-cover w-full h-full"
               />
             </div>
             <div className="p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <ImageIcon className="h-4 w-4 text-blue-600" />
-                <span className="text-sm font-medium text-gray-900">Image_{item}.jpg</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <span className="px-2 py-1 text-xs font-medium bg-blue-50 text-blue-600 rounded-full">
-                  Landscape
-                </span>
-                <span className="px-2 py-1 text-xs font-medium bg-green-50 text-green-600 rounded-full">
-                  Nature
-                </span>
-              </div>
+              <p className="text-sm text-gray-600 truncate">{image.filename}</p>
+              <p className="text-xs text-gray-500">
+                {new Date(image.uploadDate).toLocaleDateString()}
+              </p>
             </div>
           </div>
         ))}
       </div>
     </div>
   );
-};
-
-export default Images;
+}
