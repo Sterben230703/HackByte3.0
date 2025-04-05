@@ -2,8 +2,8 @@ import React from "react";
 import { WalletName, useWallet } from "@aptos-labs/wallet-adapter-react";
 import { Button } from "../ui/button";
 import { X } from "lucide-react";
-import { AccountInfo } from "../AcoountInfo";
-import { NetworkInfo } from "../NetworkInfo";
+import { AccountInfo } from "../Account";
+import { NetworkInfo } from "../Network";
 
 interface MainNavProps {
   showAccountInfo: boolean;

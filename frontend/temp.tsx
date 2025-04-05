@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./index.css";
 import { WalletProvider } from "./components/WalletProvider";
 import ContractManagement from "@/components/ContractManagement";
-import DocumentCategories from "@/components/Categorize";
+import DocumentCategories from "@/components/Category";
 import SharedDocs from "@/components/SharedDocs";
 
 function App() {

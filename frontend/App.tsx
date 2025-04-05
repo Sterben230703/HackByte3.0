@@ -2,9 +2,10 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { WalletSelector } from "./components/WalletSelector";
-import ContractManagement from "@/components/ContractManagement";
 import SigningDocument from "@/components/SigningDocument";
-import Categorize from "@/components/Categorize";
+import Categorize from "@/components/Category";
+import { Analytics } from "./components/Analytics";
+import ContractManagement from "./components/main";
 
 function App() {
   const { connected } = useWallet();

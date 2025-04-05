@@ -10,8 +10,9 @@ import {
 } from "lucide-react";
 import { IoDocument, IoAnalytics } from "react-icons/io5";
 import { Dialog, DialogContent } from "../ui/dialog";
-import DocumentCategories from "../Categorize";
-import ChatWithDocs from "../ChatWithDocs";
+import DocumentCategories from "../Category";
+import ChatWithDocs from "../Chat";
+import { Analytics } from "../Analytics";
 
 const ACTIVE_TAB_STYLES = "bg-gradient-to-r from-blue-500/20 to-blue-500/10 border-l-2 border-blue-500 text-blue-700";
 
@@ -32,11 +33,12 @@ export default function Sidebar({
 }: SidebarProps) {
   const [isSharedDocsOpen, setIsSharedDocsOpen] = useState(false);
   const [isCategorizeOpen, setIsCategorizeOpen] = useState(false);
+  const [isDocumentOpen, setIsDocumentOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   const navigationItems = [
     { id: "dashboard", icon: <LayoutDashboard className="w-5 h-5" />, label: "Dashboard" },
-    { id: "analytics", icon: <IoAnalytics className="w-5 h-5" />, label: "Analytics" },
+    { id: "analytics", icon: <IoAnalytics className="w-5 h-5" />, label: "Analytics", onClick: () => setIsDocumentOpen(true) },
     { id: "Categorized", icon: <Grid className="w-5 h-5" />, label: "Categorized", onClick: () => setIsCategorizeOpen(true) },
     { id: "Shared", icon: <Share2 className="w-5 h-5" />, label: "Shared", onClick: () => setIsSharedDocsOpen(true) },
     { id: "chat", icon: <MessageSquare className="w-5 h-5" />, label: "Chat Assistant", onClick: () => setIsChatOpen(true) },
@@ -126,6 +128,12 @@ export default function Sidebar({
       <Dialog open={isSharedDocsOpen} onOpenChange={setIsSharedDocsOpen}>
         <DialogContent className="max-w-7xl w-[90vw] h-[90vh] p-0">
           <SharedDocs isOpen={isSharedDocsOpen} onClose={() => setIsSharedDocsOpen(false)} />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isDocumentOpen} onOpenChange={setIsDocumentOpen}>
+        <DialogContent className="max-w-7xl w-[90vw] h-[90vh] p-0">
+            <Analytics isOpen={isDocumentOpen} onClose={() => setIsDocumentOpen(false)} />
         </DialogContent>
       </Dialog>
     </>

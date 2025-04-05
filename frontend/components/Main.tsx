@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { AccountInfo } from "./AcoountInfo";
-import { NetworkInfo } from "./NetworkInfo";
+import { AccountInfo } from "./Account";
+import { NetworkInfo } from "./Network";
 import Sidebar from "./layout/Sidebar";
 import MainNav from "./layout/MainNav";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
