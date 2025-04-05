@@ -19,6 +19,7 @@
     "@types/formidable": "^3.4.5",
     "@types/node": "^20.11.24",
     "@types/react-dropzone": "^5.1.0",
+    "aptos": "^1.21.0",
     "axios": "^1.8.4",
     "chart.js": "^4.4.1",
     "cors": "^2.8.5",
