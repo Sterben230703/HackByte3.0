@@ -41,57 +41,57 @@ interface CategoryGroup {
 
 const STATUS_STYLES: Record<CategoryType, StyleType> = {
   'personal identity': {
-    bg: 'bg-purple-500/10',
-    border: 'border-purple-500/20',
-    text: 'text-purple-400',
-    icon: 'text-purple-400',
-    hover: 'hover:border-purple-500/50'
+    bg: 'bg-blue-100',
+    border: 'border-blue-300',
+    text: 'text-blue-700',
+    icon: 'text-blue-600',
+    hover: 'hover:border-blue-400'
   },
   'legal': {
-    bg: 'bg-blue-500/10',
-    border: 'border-blue-500/20',
-    text: 'text-blue-400',
-    icon: 'text-blue-400',
-    hover: 'hover:border-blue-500/50'
+    bg: 'bg-indigo-100',
+    border: 'border-indigo-300',
+    text: 'text-indigo-700',
+    icon: 'text-indigo-600',
+    hover: 'hover:border-indigo-400'
   },
   'education': {
-    bg: 'bg-blue-500/10',
-    border: 'border-blue-500/20',
-    text: 'text-blue-400',
-    icon: 'text-blue-400',
-    hover: 'hover:border-blue-500/50'
+    bg: 'bg-cyan-100',
+    border: 'border-cyan-300',
+    text: 'text-cyan-700',
+    icon: 'text-cyan-600',
+    hover: 'hover:border-cyan-400'
   },
   'financial': {
-    bg: 'bg-yellow-500/10',
-    border: 'border-yellow-500/20',
-    text: 'text-yellow-400',
-    icon: 'text-yellow-400',
-    hover: 'hover:border-yellow-500/50'
+    bg: 'bg-emerald-100',
+    border: 'border-emerald-300',
+    text: 'text-emerald-700',
+    icon: 'text-emerald-600',
+    hover: 'hover:border-emerald-400'
   },
   'medical': {
-    bg: 'bg-red-500/10',
-    border: 'border-red-500/20',
-    text: 'text-red-400',
-    icon: 'text-red-400',
-    hover: 'hover:border-red-500/50'
+    bg: 'bg-rose-100',
+    border: 'border-rose-300',
+    text: 'text-rose-700',
+    icon: 'text-rose-600',
+    hover: 'hover:border-rose-400'
   },
   'work': {
-    bg: 'bg-orange-500/10',
-    border: 'border-orange-500/20',
-    text: 'text-orange-400',
-    icon: 'text-orange-400',
-    hover: 'hover:border-orange-500/50'
+    bg: 'bg-amber-100',
+    border: 'border-amber-300',
+    text: 'text-amber-700',
+    icon: 'text-amber-600',
+    hover: 'hover:border-amber-400'
   },
   'other': {
-    bg: 'bg-gray-500/10',
-    border: 'border-gray-500/20',
-    text: 'text-gray-400',
-    icon: 'text-gray-400',
-    hover: 'hover:border-gray-500/50'
+    bg: 'bg-slate-100',
+    border: 'border-slate-300',
+    text: 'text-slate-700',
+    icon: 'text-slate-600',
+    hover: 'hover:border-slate-400'
   }
 };
 
-export default function DocumentCategories() {
+const DocumentCategories = () => {  // Changed to const declaration
   const [documents, setDocuments] = useState<Document[]>([]);
   const [categorizedDocs, setCategorizedDocs] = useState<CategoryGroup>({});
   const [loading, setLoading] = useState(true);
@@ -115,8 +115,6 @@ export default function DocumentCategories() {
       fetchAndCategorizeDocuments();
     }
   }, [genAI]);
-
-  console.log(documents);
 
   const fetchAndCategorizeDocuments = async () => {
     setLoading(true);
@@ -250,136 +248,146 @@ export default function DocumentCategories() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#1A1B1E] flex items-center justify-center">
+      <div className="min-h-[80vh] bg-white flex items-center justify-center">
         <div className="space-y-4 text-center">
-          <div className="w-16 h-16 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin mx-auto" />
-          <p className="text-gray-400 animate-pulse">Analyzing documents...</p>
+          <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto" />
+          <p className="text-blue-800 animate-pulse font-medium">Analyzing documents...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#1A1B1E] text-gray-100 p-8">
+    <div className="bg-white text-gray-900 h-[90vh] overflow-y-auto">
       <Toaster />
-      <h1 className="text-2xl font-bold mb-8 flex items-center space-x-3">
-        <FolderOpen className="w-8 h-8 text-blue-400" />
-        <span>Document Categories</span>
-      </h1>
+      <div className="p-6">
+        <header className="mb-8 flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-blue-900 flex items-center gap-3">
+            <FolderOpen className="w-6 h-6 text-blue-600" />
+            <span>Document Hub</span>
+          </h1>
+        </header>
 
-      {error ? (
-        <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center space-x-2">
-          <AlertCircle className="w-5 h-5 text-red-400" />
-          <p>{error}</p>
-        </div>
-      ) : (
-        <div className="space-y-8">
-          {Object.entries(categorizedDocs).map(([category, docs]) => (
-            <div key={category} className="space-y-4">
-              <h2 className="text-xl font-semibold capitalize flex items-center space-x-2">
-                <span className={`w-2 h-2 rounded-full ${STATUS_STYLES[category as CategoryType].bg}`} />
-                <span>{category} Documents</span>
-                <span className="text-sm text-gray-400">({docs.length})</span>
-              </h2>
+        {error ? (
+          <div className="p-6 rounded-xl bg-rose-50 border border-rose-200 flex items-center gap-3 mb-8">
+            <AlertCircle className="w-6 h-6 text-rose-600 flex-shrink-0" />
+            <p className="text-rose-700 font-medium">{error}</p>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {Object.entries(categorizedDocs).map(([category, docs]) => (
+              <section key={category} className="rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                <div className="bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-4">
+                  <h2 className="text-xl font-semibold text-white capitalize flex items-center gap-3">
+                    <span className={`w-3 h-3 rounded-full bg-white`} />
+                    <span>{category} Documents</span>
+                    <span className="text-sm text-blue-100 font-normal">({docs.length})</span>
+                  </h2>
+                </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {docs.map((doc) => {
-                  const styles = STATUS_STYLES[doc.category as CategoryType || 'other'];
-                  return (
-                    <div
-                      key={doc.id}
-                      className={`group relative bg-gray-800/50 backdrop-blur-sm rounded-xl border ${styles.border} hover:shadow-lg transition-all duration-200`}
-                    >
-                      <div className={`absolute top-0 left-4 right-0 h-2 ${styles.bg} rounded-b-lg`} />
+                <div className="p-4 bg-white">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {docs.map((doc) => {
+                      const styles = STATUS_STYLES[doc.category as CategoryType || 'other'];
+                      return (
+                        <div
+                          key={doc.id}
+                          className={`group relative bg-white rounded-xl border ${styles.border} shadow-sm hover:shadow-md transition-all duration-200 ${styles.hover}`}
+                        >
+                          <div className={`absolute top-0 left-0 right-0 h-2 ${styles.bg} rounded-b-lg`} />
 
-                      <div className="p-4 md:p-6">
-                        <div className="flex items-start justify-between mb-4">
-                          <div className={`w-10 h-10 rounded-lg ${styles.bg} flex items-center justify-center`}>
-                            <FileText className={`w-5 h-5 ${styles.icon}`} />
-                          </div>
-                          <div className="flex space-x-2">
-                            <button
-                              onClick={() => handleViewDocument(doc)}
-                              className="p-2 rounded-lg hover:bg-gray-700 transition-colors"
-                              title="View Document"
-                            >
-                              <Eye className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => openIPFSFile(doc.content_hash)}
-                              className="p-2 rounded-lg hover:bg-gray-700 transition-colors"
-                              title="Open in IPFS"
-                            >
-                              <Link2 className="w-4 h-4" />
-                            </button>
+                          <div className="p-4">
+                            <div className="flex items-start justify-between mb-4 pt-2">
+                              <div className={`w-12 h-12 rounded-lg ${styles.bg} flex items-center justify-center`}>
+                                <FileText className={`w-6 h-6 ${styles.icon}`} />
+                              </div>
+                              <div className="flex gap-1">
+                                <button
+                                  onClick={() => handleViewDocument(doc)}
+                                  className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                                  title="View Document"
+                                >
+                                  <Eye className="w-5 h-5 text-blue-600" />
+                                </button>
+                                <button
+                                  onClick={() => openIPFSFile(doc.content_hash)}
+                                  className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                                  title="Open in IPFS"
+                                >
+                                  <Link2 className="w-5 h-5 text-blue-600" />
+                                </button>
+                              </div>
+                            </div>
+
+                            <div className="space-y-2">
+                              <h3 className="font-medium text-lg">Document {doc.id}</h3>
+                              <p className="text-gray-600">
+                                {doc.signatures.length} of {doc.signers.length} signatures
+                              </p>
+                              <div className={`text-sm ${styles.text} flex items-center gap-2`}>
+                                <span className={`w-2 h-2 rounded-full ${doc.is_completed ? 'bg-green-500' : 'bg-amber-500'}`} />
+                                <span>{doc.is_completed ? 'Completed' : 'Pending'}</span>
+                              </div>
+                            </div>
                           </div>
                         </div>
-
-                        <div className="space-y-2">
-                          <h3 className="font-medium">Document {doc.id}</h3>
-                          <p className="text-sm text-gray-400">
-                            {doc.signatures.length} of {doc.signers.length} signatures
-                          </p>
-                          <div className={`text-xs ${styles.text} flex items-center space-x-1`}>
-                            <span className={`w-2 h-2 rounded-full ${doc.is_completed ? 'bg-blue-500' : 'bg-yellow-500'}`} />
-                            <span>{doc.is_completed ? 'Completed' : 'Pending'}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Document Viewer Modal */}
-      {selectedDoc && viewUrl && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-900 rounded-xl w-full max-w-4xl h-[90vh] flex flex-col">
-            <div className="flex items-center justify-between p-4 border-b border-gray-800">
-              <div className="flex items-center space-x-3">
-                <div className={`w-8 h-8 rounded-lg ${STATUS_STYLES[selectedDoc.category as CategoryType || 'other'].bg} flex items-center justify-center`}>
-                  <FileText className={`w-4 h-4 ${STATUS_STYLES[selectedDoc.category as CategoryType || 'other'].icon}`} />
+                      );
+                    })}
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-medium">Document {selectedDoc.id}</h3>
-                  <p className="text-sm text-gray-400">
-                    {selectedDoc.signatures.length} of {selectedDoc.signers.length} signatures
-                  </p>
+              </section>
+            ))}
+          </div>
+        )}
+
+        {/* Document Viewer Modal */}
+        {selectedDoc && viewUrl && (
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl w-full max-w-5xl h-[90vh] flex flex-col shadow-2xl">
+              <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-lg ${STATUS_STYLES[selectedDoc.category as CategoryType || 'other'].bg} flex items-center justify-center`}>
+                    <FileText className={`w-5 h-5 ${STATUS_STYLES[selectedDoc.category as CategoryType || 'other'].icon}`} />
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-lg">Document {selectedDoc.id}</h3>
+                    <p className="text-gray-600">
+                      {selectedDoc.signatures.length} of {selectedDoc.signers.length} signatures
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => openIPFSFile(selectedDoc.content_hash)}
+                    className="p-2 rounded-lg hover:bg-gray-100 transition-colors text-blue-600"
+                    title="Open in IPFS"
+                  >
+                    <ExternalLink className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedDoc(null);
+                      setViewUrl(null);
+                    }}
+                    className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => openIPFSFile(selectedDoc.content_hash)}
-                  className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
-                  title="Open in IPFS"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => {
-                    setSelectedDoc(null);
-                    setViewUrl(null);
-                  }}
-                  className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                </button>
+              <div className="flex-1 p-6 bg-gray-50">
+                <iframe
+                  src={viewUrl}
+                  className="w-full h-full rounded-lg border border-gray-200 shadow-sm bg-white"
+                  title="Document Preview"
+                />
               </div>
-            </div>
-            <div className="flex-1 p-4">
-              <iframe
-                src={viewUrl}
-                className="w-full h-full rounded-lg border border-gray-800"
-                title="Document Preview"
-              />
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
-}
+};
+
+export default DocumentCategories;  // Changed to default export

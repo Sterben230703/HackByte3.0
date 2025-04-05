@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { AccountInfo } from "./AcoountInfo";
 import { NetworkInfo } from "./NetworkInfo";
+import Sidebar from "./layout/Sidebar";
+import MainNav from "./layout/MainNav";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { aptosClient } from "@/utils/aptosClient";
 import { InputTransactionData } from "@aptos-labs/wallet-adapter-react";
@@ -11,16 +13,12 @@ import {
   Clock,
   Grid,
   Share2,
-  Trash2,
   Upload,
   MoreVertical,
   FileText,
   X,
-  Menu,
   Eye,
-  Bot,
   ExternalLink,
-  LayoutDashboard,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
@@ -389,92 +387,16 @@ export default function ContractManagement() {
       <Toaster />
       {/* Main Layout */}
       <div className="flex h-screen overflow-hidden">
-        {/* Sidebar */}
-        <div
-          className={`${isMobile ? "fixed" : "relative"} z-20 transition-all duration-300 flex flex-col ${
-            isSidebarCollapsed ? "w-16" : "w-64"
-          } h-full border-r border-gray-200 bg-white shadow-sm`}
-        >
-          {/* Navigation */}
-          <div className="px-4 py-6">
-            <div className="flex items-center justify-between">
-              {!isSidebarCollapsed && (
-                <h2 className="text-4xl font-bold flex items-center text-gray-800">
-                  <img src="/logo.png" alt="Logo" className="w-14 h-13 mr-2" />
-                  SAULT
-                </h2>
-              )}
-              {isMobile && (
-                <button
-                  onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-                  className="p-2 rounded-lg hover:bg-gray-100"
-                >
-                  <Menu className="w-5 h-5 text-gray-600" />
-                </button>
-              )}
-            </div>
-          </div>
-
-          <nav className="flex-1 px-4 space-y-1">
-            {[
-              { id: "dashboard", icon: <LayoutDashboard className="w-5 h-5" />, label: "Dashboard" },
-              { id: "documents", icon: <IoDocument className="w-5 h-5" />, label: "Documents" },
-              { id: "analytics", icon: <IoAnalytics className="w-5 h-5" />, label: "Analytics" },
-              { id: "Categorized", icon: <Grid className="w-5 h-5" />, label: "Categorized", path: "/categorize" },
-              { id: "Shared", icon: <Share2 className="w-5 h-5" />, label: "Shared", path: "/shared-docs" },
-              // { id: "Trash", icon: <Trash2 className="w-5 h-5" />, label: "Trash" },
-            ].map((item) => (
-              <Link key={item.id} to={item.path || "#"}>
-                <button
-                  onClick={() => setActiveTab(item.id)}
-                  className={`w-full rounded-lg transition-all duration-200 flex items-center ${
-                    isSidebarCollapsed ? "justify-center p-3" : "px-4 py-2 space-x-3"
-                  } ${
-                    activeTab === item.id ? ACTIVE_TAB_STYLES : "text-gray-600 hover:text-blue-600 hover:bg-gray-100"
-                  }`}
-                >
-                  {item.icon}
-                  {!isSidebarCollapsed && <span>{item.label}</span>}
-                </button>
-              </Link>
-            ))}
-          </nav>
-
-          {/* Bottom Actions */}
-          
-        </div>
-
+        <Sidebar
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          isSidebarCollapsed={isSidebarCollapsed}
+          setIsSidebarCollapsed={setIsSidebarCollapsed}
+          isMobile={isMobile}
+        />
         {/* Main Content */}
         <div className="flex-1 ml-20 md:ml-0 overflow-y-auto">
-          {/* Header */}
-          <div className="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
-            <div className="px-4 md:px-6 py-4 flex items-center justify-end">
-              {!account ? (
-                <button
-                  onClick={() => connect("Petra" as WalletName<"Petra">)}
-                  className="px-4 md:px-6 py-2 text-sm md:text-base rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors text-white"
-                >
-                  Connect
-                </button>
-              ) : (
-                <div className="flex items-center space-x-3">
-                  <Button
-                    className="hidden md:inline text-sm text-white bg-blue-600 hover:bg-blue-700"
-                    onClick={() => setShowAccountInfo(true)}
-                  >
-                    {`${account.address.slice(0, 6)}...${account.address.slice(-4)}`}
-                  </Button>
-                  <button
-                    onClick={() => disconnect()}
-                    className="px-4 py-2 text-sm rounded-lg border border-red-500 text-red-500 hover:bg-red-50 transition-colors"
-                  >
-                    Logout
-                  </button>
-                </div>
-                
-              )}
-            </div>
-          </div>
+          <MainNav showAccountInfo={showAccountInfo} setShowAccountInfo={setShowAccountInfo} />
 
           {/* Content Area */}
           <div className="p-4 md:p-6 space-y-6">
@@ -871,34 +793,6 @@ export default function ContractManagement() {
         </div>
       )}
 
-      {/* Mobile Overlay */}
-      {isMobile && !isSidebarCollapsed && (
-        <div className="fixed inset-0 bg-black/50 z-10" onClick={() => setIsSidebarCollapsed(true)} />
-      )}
-
-      {/* Account Info Modal */}
-      {showAccountInfo && (
-        <div
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-          onClick={() => setShowAccountInfo(false)}
-        >
-          <div className="bg-white rounded-xl w-full max-w-md p-6 shadow-lg" onClick={(e) => e.stopPropagation()}>
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-semibold text-blue-900">Account Details</h3>
-              <button
-                onClick={() => setShowAccountInfo(false)}
-                className="p-2 rounded-lg hover:bg-blue-100 transition-colors"
-              >
-                <X className="w-5 h-5 text-black-900" />
-              </button>
-            </div>
-            <div className="space-y-8 text-black-800">
-              <AccountInfo />
-              <NetworkInfo />
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
