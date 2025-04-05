@@ -18,7 +18,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout, items }) => {
     <div className="h-full w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-4">
       <div className="flex items-center gap-2 mb-8 px-2">
         <FileText className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-        <h1 className="text-xl font-bold text-gray-800 dark:text-white">DocuSmart AI</h1>
+        <h1 className="text-xl font-bold text-gray-800 dark:text-white">Sault</h1>
       </div>
       
       <nav className="space-y-1">
