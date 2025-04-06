@@ -58,10 +58,13 @@ export default function ChatWithDocs({ isOpen, onClose }: ChatWithDocsProps) {
 
   const moduleAddress = import.meta.env.VITE_APP_MODULE_ADDRESS;
   const moduleName = import.meta.env.VITE_APP_MODULE_NAME;
-  const API_KEY = "AIzaSyD6olpfeXKuZiACMF5awOE_HxOI4ifOlZM";
+  const API_KEY = process.env.VITE_GEMINI_API_KEY;
 
-  // Initialize Gemini AI
   useEffect(() => {
+    if (!API_KEY) {
+      console.error('API key is not defined');
+      return;
+    }
     const ai = new GoogleGenerativeAI(API_KEY);
     setGenAI(ai);
   }, []);
@@ -136,7 +139,7 @@ export default function ChatWithDocs({ isOpen, onClose }: ChatWithDocsProps) {
         // Filter documents created by the connected account
         const userDocuments = response[0].filter(doc => doc.creator === account.address);
         
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
         const processedDocuments: ProcessedDocument[] = [];
   
         for (const doc of userDocuments) {  // Process only user's documents
@@ -187,7 +190,7 @@ export default function ChatWithDocs({ isOpen, onClose }: ChatWithDocsProps) {
     setUserInput('');
 
     try {
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
       // Create detailed context with document summaries and signer info
       const context = processedDocs.map(doc => 

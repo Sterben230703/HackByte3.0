@@ -4,7 +4,6 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { WalletSelector } from "./components/Selector";
 import SigningDocument from "@/components/DocSign";
 import Categorize from "@/components/Category";
-import { Analytics } from "./components/Analytics";
 import ContractManagement from "./components/Main";
 
 function App() {

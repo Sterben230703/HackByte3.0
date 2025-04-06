@@ -66,7 +66,7 @@ export const MonthlyBarChart = ({ monthlyData }: MonthlyBarChartProps) => {
       title: {
         display: true,
         text: 'Monthly Expenditure Overview (with GST & CGST)',
-        color: '#E5E7EB',
+        color: '#000000',
         font: {
           size: 16,
         },
@@ -114,7 +114,7 @@ export const MonthlyBarChart = ({ monthlyData }: MonthlyBarChartProps) => {
   };
 
   return (
-    <div className="w-full p-6 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700">
+    <div className="w-full p-6 bg-white backdrop-blur-sm rounded-xl border border-gray-700">
       <Bar data={data} options={options} />
     </div>
   );

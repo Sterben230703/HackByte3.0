@@ -91,8 +91,7 @@ const STATUS_STYLES: Record<CategoryType, StyleType> = {
   }
 };
 
-const DocumentCategories = () => {  // Changed to const declaration
-  const [documents, setDocuments] = useState<Document[]>([]);
+const DocumentCategories = () => {
   const [categorizedDocs, setCategorizedDocs] = useState<CategoryGroup>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -100,12 +99,16 @@ const DocumentCategories = () => {  // Changed to const declaration
   const [viewUrl, setViewUrl] = useState<string | null>(null);
   const [genAI, setGenAI] = useState<any>(null);
 
-  const API_KEY = "AIzaSyD4ZtMGRx91QQDUsDy0vLJHuIgo8XfL3WY";
+  const API_KEY = process.env.VITE_GEMINI_API_KEY;
   const moduleAddress = process.env.VITE_APP_MODULE_ADDRESS;
   const moduleName = process.env.VITE_APP_MODULE_NAME;
   const { account } = useWallet();
 
   useEffect(() => {
+    if (!API_KEY) {
+      console.error('API key is not defined');
+      return;
+    }
     const ai = new GoogleGenerativeAI(API_KEY);
     setGenAI(ai);
   }, []);
@@ -129,7 +132,7 @@ const DocumentCategories = () => {  // Changed to const declaration
 
       if (Array.isArray(response) && response.length > 0 && account) {
         const userDocuments = response[0].filter((doc: Document) => doc.creator === account.address);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
         const categorizedResults: Document[] = [];
 
         for (const doc of userDocuments) {
@@ -215,7 +218,6 @@ const DocumentCategories = () => {  // Changed to const declaration
           return acc;
         }, {} as CategoryGroup);
 
-        setDocuments(categorizedResults);
         setCategorizedDocs(grouped);
         localStorage.setItem('processedDocuments', JSON.stringify(categorizedResults));
       }

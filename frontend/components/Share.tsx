@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { aptosClient } from "@/utils/aptosClient";
-import { InputTransactionData } from "@aptos-labs/wallet-adapter-react";
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
-import { Clock, Grid, Share2, Trash2, Upload, MoreVertical, FileText, X, Eye, ExternalLink } from "lucide-react";
+import { Clock, Grid, Share2, MoreVertical, FileText, X, Eye, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Button } from "./ui/button";
 
 interface Signature {
   signer: string;
@@ -20,11 +18,6 @@ interface Document {
   signers: string[];
   signatures: Signature[];
   is_completed: boolean;
-}
-
-interface Signer {
-  address: string;
-  label?: string;
 }
 
 const STATUS_STYLES = {
@@ -50,17 +43,11 @@ interface SharedDocsProps {
 }
 
 export default function SharedDocs({ isOpen, onClose }: SharedDocsProps) {
-  const { account, signAndSubmitTransaction } = useWallet();
-  const [activeTab, setActiveTab] = useState("recent");
+  const { account } = useWallet();
   const [isGridView, setIsGridView] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [documents, setDocuments] = useState<Document[]>([]);
-  const [pendingDocuments, setPendingDocuments] = useState<Document[]>([]);
-  const [file, setFile] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
   const [viewingDoc, setViewingDoc] = useState<Document | null>(null);
   const [viewUrl, setViewUrl] = useState<string | null>(null);
-  const [signersList, setSignersList] = useState<Signer[]>([{ address: "" }]);
 
   const moduleAddress = process.env.VITE_APP_MODULE_ADDRESS;
   const moduleName = process.env.VITE_APP_MODULE_NAME;
@@ -68,9 +55,14 @@ export default function SharedDocs({ isOpen, onClose }: SharedDocsProps) {
   useEffect(() => {
     if (account) {
       fetchUserDocuments();
-      fetchPendingDocuments();
     }
   }, [account]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      onClose();
+    }
+  }, [isOpen, onClose]);
 
   const fetchUserDocuments = async () => {
     if (!account) return;
@@ -94,33 +86,6 @@ export default function SharedDocs({ isOpen, onClose }: SharedDocsProps) {
     } catch (error) {
       console.error("Error fetching documents:", error);
       toast.error("Failed to fetch documents");
-    }
-  };
-
-  const fetchPendingDocuments = async () => {
-    if (!account) return;
-    try {
-      const response = await aptosClient().view<[Document[]]>({
-        payload: {
-          function: `${moduleAddress}::${moduleName}::get_all_documents`,
-          typeArguments: [],
-          functionArguments: [],
-        },
-      });
-
-      if (Array.isArray(response) && response.length > 0 && account) {
-        const pendingDocs = response[0].filter(
-          (doc) =>
-            doc.signers.includes(account.address) &&
-            !doc.signatures.some((sig) => sig.signer === account.address) &&
-            !doc.is_completed,
-        );
-        setPendingDocuments(pendingDocs);
-      } else {
-        setPendingDocuments([]);
-      }
-    } catch (error) {
-      console.error("Error fetching pending documents:", error);
     }
   };
 
@@ -148,68 +113,6 @@ export default function SharedDocs({ isOpen, onClose }: SharedDocsProps) {
     }
   };
 
-  const uploadToPinata = async (file: File) => {
-    const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
-    let formData = new FormData();
-    formData.append("file", file);
-
-    const metadata = JSON.stringify({
-      name: "Document File",
-    });
-    formData.append("pinataMetadata", metadata);
-
-    try {
-      const res = await axios.post(url, formData, {
-        headers: {
-          pinata_api_key: process.env.VITE_APP_PINATA_API_KEY,
-          pinata_secret_api_key: process.env.VITE_APP_PINATA_SECRET_API_KEY,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      return res.data.IpfsHash;
-    } catch (error) {
-      console.error("Error uploading to Pinata:", error);
-      throw error;
-    }
-  };
-
-  const handleCreateDocument = async () => {
-    if (!account || !file || signersList.every((s) => !s.address.trim())) return;
-    setLoading(true);
-    try {
-      const cid = await uploadToPinata(file);
-      const signerAddresses = signersList
-        .filter((signer) => signer.address.trim() !== "")
-        .map((signer) => signer.address.trim());
-
-      const payload: InputTransactionData = {
-        data: {
-          function: `${moduleAddress}::${moduleName}::create_document`,
-          functionArguments: [cid, signerAddresses],
-        },
-      };
-      await signAndSubmitTransaction(payload);
-      setIsModalOpen(false);
-      setFile(null);
-      setSignersList([{ address: "" }]);
-      fetchUserDocuments();
-      toast.custom((_t) => (
-        <div className="bg-white text-gray-800 px-6 py-4 shadow-xl rounded-lg border border-gray-200 animate-in slide-in-from-bottom-5">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-              <FileText className="w-4 h-4 text-blue-600" />
-            </div>
-            <p>Document uploaded successfully</p>
-          </div>
-        </div>
-      ));
-    } catch (error) {
-      console.error("Error creating document:", error);
-      toast.error("Failed to upload document");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleShare = (docId: number) => {
     const signingLink = `${window.location.origin}/sign/${docId}`;

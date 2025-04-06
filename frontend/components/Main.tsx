@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { AccountInfo } from "./Account";
-import { NetworkInfo } from "./Network";
+import { useState, useEffect } from "react";
 import Sidebar from "./layout/Sidebar";
 import MainNav from "./layout/MainNav";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
@@ -8,7 +6,6 @@ import { aptosClient } from "@/utils/aptosClient";
 import { InputTransactionData } from "@aptos-labs/wallet-adapter-react";
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
-import { WalletName } from "@aptos-labs/wallet-adapter-react";
 import {
   Clock,
   Grid,
@@ -21,8 +18,6 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Button } from "./ui/button";
-import { IoAnalytics, IoDocument, IoDocumentLockOutline } from "react-icons/io5";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 interface Signature {
@@ -61,10 +56,9 @@ const STATUS_STYLES = {
   },
 };
 
-const ACTIVE_TAB_STYLES = "bg-gradient-to-r from-blue-500/20 to-blue-500/10 border-l-2 border-blue-500 text-blue-700";
 
 export default function ContractManagement() {
-  const { account, signAndSubmitTransaction, connect, disconnect } = useWallet();
+  const { account, signAndSubmitTransaction } = useWallet();
   const [showAccountInfo, setShowAccountInfo] = useState(false);
   const [activeTab, setActiveTab] = useState("recent");
   const [isGridView, setIsGridView] = useState(true);

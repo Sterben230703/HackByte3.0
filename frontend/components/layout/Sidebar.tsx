@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
 import SharedDocs from "../Share";
 import {
   LayoutDashboard,
@@ -8,7 +7,7 @@ import {
   Menu,
   MessageSquare,
 } from "lucide-react";
-import { IoDocument, IoAnalytics } from "react-icons/io5";
+import { IoAnalytics } from "react-icons/io5";
 import { Dialog, DialogContent } from "../ui/dialog";
 import DocumentCategories from "../Category";
 import ChatWithDocs from "../Chat";

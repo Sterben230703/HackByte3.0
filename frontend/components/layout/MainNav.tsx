@@ -1,4 +1,3 @@
-import React from "react";
 import { WalletName, useWallet } from "@aptos-labs/wallet-adapter-react";
 import { Button } from "../ui/button";
 import { X } from "lucide-react";
