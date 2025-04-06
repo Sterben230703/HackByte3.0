@@ -72,7 +72,7 @@ export default function ContractManagement() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(window.innerWidth < 768);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [viewUrl, setViewUrl] = useState<string | null>(null);
-  const [signersList, setSignersList] = useState<Signer[]>([{ address: "" }]);
+  const [signersList, setSignersList] = useState<Signer[]>([]);
 
   const moduleAddress = process.env.VITE_APP_MODULE_ADDRESS;
   const moduleName = process.env.VITE_APP_MODULE_NAME;
@@ -94,6 +94,8 @@ export default function ContractManagement() {
     if (account) {
       fetchUserDocuments();
       fetchPendingDocuments();
+      // Initialize signersList with current user's address
+      setSignersList([{ address: account.address }]);
     }
   }, [account]);
 
