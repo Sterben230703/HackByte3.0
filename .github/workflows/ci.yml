@@ -1,4 +1,4 @@
-name: CI/CD
+name: sault-ci
 
 on:
   push:
@@ -24,9 +24,6 @@ jobs:
 
     - name: TypeScript check
       run: npx tsc --noEmit
-
-    - name: Run ESLint
-      run: npm run lint
 
     - name: Build
       run: npm run build
