@@ -2,29 +2,64 @@
 
 Welcome to Sault, your trusted document management solution that leverages blockchain technology for secure, transparent, and efficient document handling.
 
-
 <img src="./public/logo.png" alt="Sault Logo" width="100" />
+
+---
+
+## 🔍 Problem → Cause → Solution Journey
+
+### 🔴 Problem
+
+- Organizations face **difficulty managing important documents**.
+- Traditional methods are often **scattered, unsecure**, and **lack categorization**.
+- It becomes **time-consuming** to locate, verify, and organize files.
+- There's a **risk of data loss, fraud**, or unauthorized access.
+- Lack of Trust in Bussiness contract
+
+### 🔠 Causes
+
+- Paper or traditional digital systems are **decentralized and disorganized**.
+- **Lack of encryption** and verification mechanisms.
+- **No single secure repository** for all types of documents.
+- Difficulty in **detecting duplicate or tampered files**.
+
+### 🟢 Solution – SAULT
+
+- **Secure Vault**: All your documents are safely stored with blockchain immutability.
+- **Robust Contract**: There is share in which two or more parties can sign a contract and verify while making a legal deals, decision etc. 
+- **AI-powered Categorization**: Easily organize and retrieve files with intelligent tagging.
+- **Fraud Detection**: Detect duplicates, tampered files, and fraudulent documents.
+- **Legal and Transparent**: Every transaction and update is securely logged.
+- **Chatbot Interface**: Easily query and interact with documents.
+- **Blockchain + AI Combo**: Offers security, auditability, and convenience in one place.
+
+---
 
 ## 🌟 Features
 
-- 📑 **Secure Document Storage**: Store your documents with blockchain-backed security
+- 📁 **Secure Document Storage**: Store your documents with blockchain-backed security
 - ✍️ **Document Signing**: Digital signature capabilities for legal documents
-- 🏷️ **Smart Categorization**: Organize documents with intelligent categorization
+- 🏼 **Smart Categorization**: Organize documents with intelligent categorization
 - 📊 **Analytics Dashboard**: Track and analyze document metrics
 - 🔒 **Wallet Integration**: Seamless connection with Aptos blockchain wallets
 - ⚡ **Fast Retrieval**: Quick access to your stored documents
 - 📱 **Responsive Design**: Works perfectly on both desktop and mobile devices
 
+---
+
 ## 🛠️ Technology Stack
 
-- **Frontend**: React 18 with TypeScript
+- **Frontend**  : React 18 with TypeScript
 - **Build Tool**: Vite
-- **Styling**: Tailwind CSS
+- **Styling**   : Tailwind CSS
 - **Components**: Radix UI
 - **Blockchain**: Aptos Network
-- **Charts**: Chart.js & Recharts
-- **Routing**: React Router DOM
+- **Wallet**    : Petra
+- **Charts**    : Chart.js & Recharts
+- **Routing**   : React Router DOM
 - **State Management**: React Context
+
+---
 
 ## 🚀 Getting Started
 
@@ -36,54 +71,30 @@ Welcome to Sault, your trusted document management solution that leverages block
 
 ### Installation
 
-1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/ashwinkothavade/HackByte3.0
 cd sault
-```
-
-2. Install dependencies:
-```bash
 npm install
-```
-
-3. Set up environment variables:
-```bash
 cp .env.example .env
-```
-Fill in the required environment variables in the `.env` file.
-
-### Development
-
-Start the development server:
-```bash
+# Fill in required variables
 npm run dev
 ```
-The application will be available at `http://localhost:5173`
 
-### Building for Production
+Visit `http://localhost:5173` to start using the app.
 
-Build the project:
-```bash
-npm run build
-```
-
-Preview the production build:
-```bash
-npm run preview
-```
+---
 
 ## 📦 Project Structure
 
 ```
 sault/
-├── blockchain_0/        # Aptos smart contract code
-├── frontend/
-│   ├── components/      # React components
-│   ├── utils/          # Utility functions
-│   └── lib/            # Shared libraries
-├── public/             # Static assets
-└── scripts/            # Build and deployment scripts
+🔽️── blockchain_0/        # Aptos smart contract code
+🔽️── frontend/
+    🔽️── components/      # React components
+    🔽️── utils/           # Utility functions
+    🔽️── lib/             # Shared libraries
+🔽️── public/              # Static assets
+🔽️── scripts/             # Build and deployment scripts
 ```
 
 ## 💻 Available Scripts
@@ -99,6 +110,20 @@ sault/
 - `npm run move:compile`: Compile Move modules
 - `npm run move:publish`: Publish Move modules
 
+---
+
+## 📊 Workflow
+
+<img src="./public/workflow.jpg" alt="workflow" />
+
+---
+
+## 👥 Contributors
+
+<img src="./public/contri.jpg" alt="contri " width="500" />
+
+---
+
 ## 🤝 Contributing
 
 1. Fork the repository
@@ -107,9 +132,13 @@ sault/
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
+---
+
 ## 📄 License
 
 This project is licensed under the Apache-2.0 License - see the [LICENSE](LICENSE) file for details.
+
+---
 
 ## 🔗 Links
 
