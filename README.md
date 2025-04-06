@@ -2,7 +2,9 @@
 
 Welcome to Sault, your trusted document management solution that leverages blockchain technology for secure, transparent, and efficient document handling.
 
-<img src="./public/logo.png" alt="Sault Logo" width="100" />
+<img src="./public/sault.png" alt="Sault Logo" width="500" />
+
+[Live Demo Video](https://youtu.be/LxioW6BvH2o)
 
 ---
 
@@ -96,6 +98,7 @@ sault/
 🔽️── public/              # Static assets
 🔽️── scripts/             # Build and deployment scripts
 ```
+---
 
 ## 💻 Available Scripts
 
@@ -114,7 +117,7 @@ sault/
 
 ## 📊 Workflow
 
-<img src="./public/workflow.jpg" alt="workflow" />
+<img src="./public/workflow.png" alt="workflow" />
 
 ---
 
@@ -144,7 +147,7 @@ This project is licensed under the Apache-2.0 License - see the [LICENSE](LICENS
 
 - [Documentation](#)
 - [Aptos Framework](https://aptos.dev/)
-- [Live Demo](#)
+- [Live Demo Video](https://youtu.be/LxioW6BvH2o)
 
 ---
 
